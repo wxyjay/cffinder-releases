@@ -65,8 +65,8 @@ detect_pkg_format() {
 
 detect_target() {
   case "$(uname -m)" in
-    x86_64|amd64) echo "x86" ;;
-    aarch64|arm64) echo "arm64" ;;
+    x86_64|amd64) echo "amd64" ;;
+    aarch64|arm64) echo "aarch64" ;;
     *) echo "Unsupported OpenWrt architecture: $(uname -m)" >&2; exit 1 ;;
   esac
 }
@@ -85,19 +85,20 @@ select_asset() {
   format="$2"
   target="$3"
   kind="$4"
-  names="$(extract_asset_names "$manifest" | grep "\\.${format}$" | grep "${format}-${target}-" || true)"
-  if [ -z "$names" ]; then
-    names="$(extract_asset_names "$manifest" | grep "\\.${format}$" || true)"
-  fi
+  names="$(extract_asset_names "$manifest" | grep "\\.${format}$" || true)"
   case "$kind" in
     daemon)
-      printf '%s\n' "$names" | grep 'cf-finder-opd' | grep -v 'luci-' | head -n 1
+      printf '%s\n' "$names" \
+        | grep '^cf-finder-opd' \
+        | grep -v '^luci-' \
+        | grep -E "(_|-)$target\\.${format}$" \
+        | head -n 1
       ;;
     luci)
-      printf '%s\n' "$names" | grep 'luci-app-cf-finder-opd' | head -n 1
+      printf '%s\n' "$names" | grep '^luci-app-cf-finder-opd' | head -n 1
       ;;
     i18n)
-      printf '%s\n' "$names" | grep 'luci-i18n-cf-finder-opd-zh-cn' | head -n 1
+      printf '%s\n' "$names" | grep '^luci-i18n-cf-finder-opd-zh-cn' | head -n 1
       ;;
   esac
 }

@@ -30,12 +30,22 @@ fi
 echo "Pushing main..."
 git push -u origin main
 
-echo "Pushing the same commit to debug..."
-if ! git push -u origin main:debug; then
-  echo
-  echo "Failed to update debug with a fast-forward push."
-  echo "If debug intentionally diverged, merge main into debug manually and push again."
-  exit 1
+echo "Merging main into debug..."
+if git fetch origin debug:refs/remotes/origin/debug >/dev/null 2>&1; then
+  git switch debug >/dev/null 2>&1 || git switch -c debug --track origin/debug
+  if ! git merge --ff-only origin/debug; then
+    echo
+    echo "Local debug has diverged from origin/debug."
+    echo "Please inspect the debug branch manually, then rerun this script."
+    exit 1
+  fi
+else
+  echo "Remote debug branch does not exist; creating it from main."
+  git switch debug >/dev/null 2>&1 || git switch -c debug main
 fi
+
+git merge --no-edit main
+git push -u origin debug
+git switch main >/dev/null
 
 echo "Done."

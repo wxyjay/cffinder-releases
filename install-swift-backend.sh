@@ -82,7 +82,7 @@ require_root() {
 detect_arch() {
   case "$(uname -m)" in
     x86_64|amd64) echo "amd64" ;;
-    aarch64|arm64) echo "arm64" ;;
+    aarch64|arm64) echo "aarch64" ;;
     *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
   esac
 }
