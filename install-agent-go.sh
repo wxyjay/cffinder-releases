@@ -81,7 +81,7 @@ need_cmd() {
 detect_arch() {
   case "$(uname -m)" in
     x86_64|amd64) echo "amd64" ;;
-    aarch64|arm64) echo "arm64" ;;
+    aarch64|arm64) echo "aarch64" ;;
     armv7l|armv7|armhf) echo "armv7" ;;
     *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
   esac
@@ -103,7 +103,7 @@ detect_target() {
   libc="$(detect_libc)"
   if [[ "$libc" == "musl" ]]; then
     case "$arch" in
-      amd64|arm64) echo "alpine-${arch}" ;;
+      amd64|aarch64) echo "alpine-${arch}" ;;
       *) echo "Alpine target does not support arch=${arch}" >&2; exit 1 ;;
     esac
   else
