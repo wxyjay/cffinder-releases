@@ -1,0 +1,62 @@
+{
+  "project": "opd",
+  "version": "0.1.0",
+  "packageRelease": "1",
+  "channel": "debug",
+  "tag": "opd-debug-v0.1.0-1",
+  "commit": "8ed7d5a6bc6e45c1bd20a21e223c36d67c983d94",
+  "assets": [
+    {
+      "name": "apk-all-luci-app-cf-finder-opd-0.1.0-r21.apk",
+      "sha256": "682d187c83c25744f511ca40de524774ee0108dc9ae17beafde1da6f99085608"
+    },
+    {
+      "name": "apk-arm64-cf-finder-opd-0.1.0-r15.apk",
+      "sha256": "fa84721138af830d9f45d0e51013ae4b91a1978d85f88ed0622002c419076903"
+    },
+    {
+      "name": "apk-x86-cf-finder-opd-0.1.0-r15.apk",
+      "sha256": "dc8071f4bdf242643b10361fb44ba82fe948be4bd1f5792ad13b787c0c31f546"
+    },
+    {
+      "name": "cf-finder-opd-0.1.0-apk-all-luci.sha256",
+      "sha256": "7aa497a06ca343e0b97afe2b98f48ab215cc9eb9244b9b583ebe3d22c7d75c5c"
+    },
+    {
+      "name": "cf-finder-opd-0.1.0-apk-arm64-daemon.sha256",
+      "sha256": "1a02dd048b5e7050aa0e2fd980556c4ddc3e66f1469ed25af3f769964850a170"
+    },
+    {
+      "name": "cf-finder-opd-0.1.0-apk-x86-daemon.sha256",
+      "sha256": "5ce1bbb7a74ac5348cdb0a8c775ae5a0e60a65ac731b20943d82fd5d8357593b"
+    },
+    {
+      "name": "cf-finder-opd-0.1.0-ipk-all-luci.sha256",
+      "sha256": "4fd91150d61bb928b4211c744a9a86da76900c1cfa9d5c11403e6ff62c4bc39e"
+    },
+    {
+      "name": "cf-finder-opd-0.1.0-ipk-arm64-daemon.sha256",
+      "sha256": "ec089b65bce3121e47197168cbcf540362ae0dcf736dd21d8ebcfbcdd81beab1"
+    },
+    {
+      "name": "cf-finder-opd-0.1.0-ipk-x86-daemon.sha256",
+      "sha256": "2fdbc03f50bbb2342d3b49507fe24f6976861eb68941acceb1abbce2ab9dc770"
+    },
+    {
+      "name": "ipk-all-luci-app-cf-finder-opd_0.1.0-1_all.ipk",
+      "sha256": "dde1ec96777e1c6e120d5c9617cf904af23459d17532c0f996201b37c26ff43d"
+    },
+    {
+      "name": "ipk-all-luci-i18n-cf-finder-opd-zh-cn_0.1.0-1_all.ipk",
+      "sha256": "ae4db1a7e8e05002dc31d236b1c9c82bcb6eb7a59de35c1f422289120bd70eb6"
+    },
+    {
+      "name": "ipk-arm64-cf-finder-opd_0.1.0-1_aarch64_generic.ipk",
+      "sha256": "aed68e99ac9933e0d67ffc076d361bb65bbfdd50165353acf8a53490281c080f"
+    },
+    {
+      "name": "ipk-x86-cf-finder-opd_0.1.0-1_x86_64.ipk",
+      "sha256": "772d3cd2ed83212774262a3b0ca12a0ba1d08223cc5264ef6b6f0b1a65a212ae"
+    }
+  ]
+}
