@@ -85,7 +85,14 @@ select_asset() {
   format="$2"
   target="$3"
   kind="$4"
-  names="$(extract_asset_names "$manifest" | grep "\\.${format}$" | grep "${format}-${target}-" || true)"
+  asset_target="$target"
+  case "$kind" in
+    luci|i18n) asset_target="all" ;;
+  esac
+  names="$(extract_asset_names "$manifest" | grep "\\.${format}$" | grep "${format}-${asset_target}-" || true)"
+  if [ -z "$names" ]; then
+    names="$(extract_asset_names "$manifest" | grep "\\.${format}$" | grep "${format}-${target}-" || true)"
+  fi
   if [ -z "$names" ]; then
     names="$(extract_asset_names "$manifest" | grep "\\.${format}$" || true)"
   fi
