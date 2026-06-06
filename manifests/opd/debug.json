@@ -4,63 +4,63 @@
   "packageRelease": "1",
   "channel": "debug",
   "tag": "opd-debug-v0.1.0-1",
-  "commit": "7ed4e4f2ac0df206c2864c8fa65b404dd0a79a2b",
+  "commit": "69930d337d7404f854bdc82bfe1ff738d75ab7f4",
   "assets": [
     {
-      "name": "apk-all-luci-app-cf-finder-opd-0.1.0-r1.apk",
-      "sha256": "7938140036815446fe601bb2d0d4f3714dce9a5a835b696548f9daaaabfc85ba"
+      "name": "cf-finder-opd-0.1.0-apk-aarch64.sha256",
+      "sha256": "181b20a6eeda687d09f6e8d8bea5cd22b0f9d1f7a73a4f8614b3db28abed1055"
     },
     {
-      "name": "apk-all-luci-i18n-cf-finder-opd-zh-cn-0.1.0-r1.apk",
-      "sha256": "9f3a9a05c106f576e6da4468661e1f42a5774fb5fd0c595c8d7fdd0faa47792a"
+      "name": "cf-finder-opd-0.1.0-apk-amd64.sha256",
+      "sha256": "d60f9faf8d17b18553d2756d555bdbcc617b5104ccf14c04741a6a3599fea1b1"
     },
     {
-      "name": "apk-arm64-cf-finder-opd-0.1.0-r15.apk",
-      "sha256": "c8759035a2e47c577577d8d931fe69bdb2b86e11c6f97e95c55e1e126948368e"
+      "name": "cf-finder-opd-0.1.0-apk-luci.sha256",
+      "sha256": "c22d4eea941e200a8377c4d907d8c85dbe6555f82106c04c41408d9767106c51"
     },
     {
-      "name": "apk-x86-cf-finder-opd-0.1.0-r15.apk",
-      "sha256": "02067c2d7a38f96d314d7a7245109e57234a8770266f86b4f51f36a742fe59c3"
+      "name": "cf-finder-opd-0.1.0-ipk-aarch64.sha256",
+      "sha256": "f66ffd6af5d3bf70fb684eea55e13ce40909e85a92d1a7b0a71ce54d3ac32fd9"
     },
     {
-      "name": "cf-finder-opd-0.1.0-apk-all-luci.sha256",
-      "sha256": "cacbf892d1c79665a86658a6397eb5c46fda82c0e4d375a97a827640ae1d946b"
+      "name": "cf-finder-opd-0.1.0-ipk-amd64.sha256",
+      "sha256": "5bb166933351b8e551b0ef22216e2d0cb9ea9242bf55e3ebe0829e533b58bb0d"
     },
     {
-      "name": "cf-finder-opd-0.1.0-apk-arm64-daemon.sha256",
-      "sha256": "33d1f28b0f567f6aaa90decf03a881f0a22362bcd3abc693b6a6b011df414766"
+      "name": "cf-finder-opd-0.1.0-ipk-luci.sha256",
+      "sha256": "b59efd7a48afd687893e4ba3a092fcf903d2aa477d3ec2469b1f99837c1bdd19"
     },
     {
-      "name": "cf-finder-opd-0.1.0-apk-x86-daemon.sha256",
-      "sha256": "aaaca9777d9aac39acd71643a4726a61bde55fcb5770cf6b4c874a77c20a43f6"
+      "name": "cf-finder-opd-0.1.0-r1-aarch64.apk",
+      "sha256": "df4b761749762785033b667d903afa4d786a5b4eeec349feb0ae56d417ac9d3b"
     },
     {
-      "name": "cf-finder-opd-0.1.0-ipk-all-luci.sha256",
-      "sha256": "cfff5129a8532831cfef5b39fc1adf0fdc136ef039ff12f679e7f1e8b2c0a498"
+      "name": "cf-finder-opd-0.1.0-r1-amd64.apk",
+      "sha256": "315937edb10a386f5c36c6975727ffa4e666d2fd7593bc629a8fb14876fbb02f"
     },
     {
-      "name": "cf-finder-opd-0.1.0-ipk-arm64-daemon.sha256",
-      "sha256": "b819ac43b27d5f98fbe78ae32e193a96bc5d4abbefe7ac882bd4041dcde1ac43"
+      "name": "cf-finder-opd_0.1.0-1_aarch64.ipk",
+      "sha256": "6c94d9938094d85d01c3e97a6a14fdad318b09d2014f73be786ad58678d256e8"
     },
     {
-      "name": "cf-finder-opd-0.1.0-ipk-x86-daemon.sha256",
-      "sha256": "ce386dbe869e7625c72e579f19b34b3f366ee3aa8ee8e7772edd54b564e6c9c0"
+      "name": "cf-finder-opd_0.1.0-1_amd64.ipk",
+      "sha256": "8898dc52cfac75820ba2dc5a19326589947dd7efa3fe3b6fd28cb9d001ce69e3"
     },
     {
-      "name": "ipk-all-luci-app-cf-finder-opd_0.1.0-1_all.ipk",
-      "sha256": "9c9f5e757b586961fa3a9adcdc9dd023666ebe2a876d3c7c67bd2f1a74eacf80"
+      "name": "luci-app-cf-finder-opd-0.1.0-r1.apk",
+      "sha256": "68fc96385b9c22fc0f1bed97cd55e06b2f1377ec199e1fabf0f43f6fc4555723"
     },
     {
-      "name": "ipk-all-luci-i18n-cf-finder-opd-zh-cn_0.1.0-1_all.ipk",
-      "sha256": "2baf27cdbb762dc8decc8715dd251adf0afeeb08a89769374dbbf09c654c9498"
+      "name": "luci-app-cf-finder-opd_0.1.0-1_all.ipk",
+      "sha256": "5eb156639120347200f22cd753cef7af1047227e62badbad4045963ac315d622"
     },
     {
-      "name": "ipk-arm64-cf-finder-opd_0.1.0-1_aarch64_generic.ipk",
-      "sha256": "caf97b91d8150a6e346995f79750de5d1961d48552dfa2759f891ea39080190b"
+      "name": "luci-i18n-cf-finder-opd-zh-cn-0.1.0-r1.apk",
+      "sha256": "3a739385c342024464049447b5fdc0d8e0a2f231328ec70a570af4127659a2b0"
     },
     {
-      "name": "ipk-x86-cf-finder-opd_0.1.0-1_x86_64.ipk",
-      "sha256": "48e2d5cbc55d8f478707e40203c2012a4ff785efb12509c1fca9187715162cdf"
+      "name": "luci-i18n-cf-finder-opd-zh-cn_0.1.0-1_all.ipk",
+      "sha256": "24d9bbfc1859b52837e8f7975a80493dffe3c7f03f76b19882aaeb278f15f764"
     }
   ]
 }
