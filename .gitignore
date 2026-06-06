@@ -1,0 +1,9 @@
+.DS_Store
+*.tmp
+*.log
+artifacts/
+downloads/
+*.tar.gz
+*.ipk
+*.apk
+*.sha256
