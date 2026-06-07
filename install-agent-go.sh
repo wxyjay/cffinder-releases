@@ -126,13 +126,40 @@ manifest_url() {
   printf 'https://raw.githubusercontent.com/%s/%s/manifests/agent-go/%s.json' "$RELEASE_REPO" "$BRANCH" "$channel"
 }
 
+extract_asset_sha() {
+  local manifest="$1"
+  local asset="$2"
+  awk -v target="$asset" '
+    match($0, /"name"[[:space:]]*:[[:space:]]*"([^"]+)"/, m) { current=m[1] }
+    match($0, /"sha256"[[:space:]]*:[[:space:]]*"([^"]+)"/, m) && current == target { print m[1]; exit }
+  ' "$manifest"
+}
+
+sha256_file() {
+  local file="$1"
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$file" | awk '{print $1}'
+    return 0
+  fi
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$file" | awk '{print $1}'
+    return 0
+  fi
+  if command -v openssl >/dev/null 2>&1; then
+    openssl dgst -sha256 "$file" | awk '{print $NF}'
+    return 0
+  fi
+  echo "Missing sha256sum, shasum, or openssl for package verification." >&2
+  exit 1
+}
+
 download_asset() {
   local target="$1"
   local channel="stable"
   [[ "$BRANCH" == "debug" ]] && channel="debug"
   local tmp_dir="$2"
   local manifest="${tmp_dir}/manifest.json"
-  local tag asset
+  local tag asset expected_sha actual_sha
 
   curl -fsSL "$(manifest_url "$channel")" -o "$manifest"
   tag="$(sed -n 's/.*"tag"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$manifest" | head -n 1)"
@@ -143,6 +170,14 @@ download_asset() {
   fi
   local url="https://github.com/${RELEASE_REPO}/releases/download/${tag}/${asset}"
   curl -fL "$url" -o "${tmp_dir}/${asset}"
+  expected_sha="$(extract_asset_sha "$manifest" "$asset" || true)"
+  if [[ -n "$expected_sha" ]]; then
+    actual_sha="$(sha256_file "${tmp_dir}/${asset}")"
+    if [[ "$actual_sha" != "$expected_sha" ]]; then
+      echo "SHA256 mismatch for ${asset}: got ${actual_sha}, expected ${expected_sha}" >&2
+      exit 1
+    fi
+  fi
   printf '%s\n' "${tmp_dir}/${asset}"
 }
 
@@ -154,6 +189,30 @@ json_string() {
 
 json_escape() {
   printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
+}
+
+random_agent_name() {
+  local letters="abcdefghijklmnopqrstuvwxyz"
+  local suffix=""
+  local byte idx seed i
+
+  if [[ -r /dev/urandom ]] && command -v od >/dev/null 2>&1; then
+    while [[ "${#suffix}" -lt 6 ]]; do
+      byte="$(od -An -N1 -tu1 /dev/urandom | tr -d '[:space:]')"
+      [[ -z "$byte" ]] && continue
+      idx=$((byte % 26))
+      suffix="${suffix}${letters:idx:1}"
+    done
+  else
+    seed=$(( $(date +%s) + $$ ))
+    for i in 1 2 3 4 5 6; do
+      seed=$(( (seed * 1103515245 + 12345) & 2147483647 ))
+      idx=$((seed % 26))
+      suffix="${suffix}${letters:idx:1}"
+    done
+  fi
+
+  printf 'Agent-%s\n' "$suffix"
 }
 
 write_config() {
@@ -169,7 +228,7 @@ write_config() {
   AGENT_ID="${AGENT_ID:-$existing_id}"
   AGENT_SECRET="${AGENT_SECRET:-$existing_secret}"
   NAME="${NAME:-$existing_name}"
-  NAME="${NAME:-$(hostname 2>/dev/null || echo cf-finder-agent)}"
+  NAME="${NAME:-$(random_agent_name)}"
 
   if [[ -z "$HUB_URL" || -z "$AGENTS_TOKEN" ]]; then
     echo "Missing --hub-url or --agents-token. Use --interactive for guided setup." >&2
