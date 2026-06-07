@@ -7,13 +7,17 @@ RELEASE_REPO="${RELEASE_REPO:-wxyjay/cffinder-releases}"
 INSTALL_DIR="${INSTALL_DIR:-/opt/cffinder-swift-backend}"
 DATA_DIR="${DATA_DIR:-/var/lib/cffinder-swift-backend}"
 UNIT_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
+LEGACY_SERVICE_NAME="CFFinderSwiftBackend"
+LEGACY_WORKING_DIR="/download/CFFinderSwiftBackend"
+LEGACY_UNIT_FILE="/etc/systemd/system/${LEGACY_SERVICE_NAME}.service"
 BRANCH="main"
 ACTION=""
+MIGRATE_LEGACY="false"
 
 usage() {
   cat <<'EOF'
 Usage:
-  install-swift-backend.sh [--branch main|debug] [--install|--uninstall|--purge|--status|--interactive]
+  install-swift-backend.sh [--branch main|debug] [--migrate-legacy] [--install|--uninstall|--purge|--status|--interactive]
 
 Actions:
   --install     Install or update service, preserving data.
@@ -21,6 +25,13 @@ Actions:
   --purge       Stop service and remove program files plus data.
   --status      Show systemd service status.
   --interactive Show menu.
+
+Migration:
+  --migrate-legacy
+                Before install, migrate data from the legacy systemd service
+                CFFinderSwiftBackend when its WorkingDirectory is
+                /download/CFFinderSwiftBackend. Also accepted:
+                --migrate-legacy-data.
 
 Environment:
   RELEASE_REPO  Public release repo, default wxyjay/cffinder-releases.
@@ -53,6 +64,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --interactive)
       ACTION="interactive"
+      shift
+      ;;
+    --migrate-legacy|--migrate-legacy-data)
+      MIGRATE_LEGACY="true"
       shift
       ;;
     -h|--help)
@@ -89,6 +104,93 @@ detect_arch() {
 
 need_cmd() {
   command -v "$1" >/dev/null 2>&1 || { echo "Missing command: $1" >&2; exit 1; }
+}
+
+normalize_unit_path() {
+  local value="$1"
+  value="${value#"${value%%[![:space:]]*}"}"
+  value="${value%"${value##*[![:space:]]}"}"
+  value="${value#\"}"
+  value="${value%\"}"
+  printf '%s\n' "$value"
+}
+
+legacy_unit_working_dir() {
+  systemctl cat "${LEGACY_SERVICE_NAME}.service" 2>/dev/null \
+    | awk -F= '/^[[:space:]]*WorkingDirectory[[:space:]]*=/ { value=$2 } END { print value }'
+}
+
+legacy_service_needs_migration() {
+  local working_dir
+  working_dir="$(legacy_unit_working_dir || true)"
+  working_dir="$(normalize_unit_path "$working_dir")"
+  [[ "$working_dir" == "$LEGACY_WORKING_DIR" ]]
+}
+
+remove_legacy_service() {
+  echo "Stopping and removing legacy service: ${LEGACY_SERVICE_NAME}"
+  systemctl stop "${LEGACY_SERVICE_NAME}.service" >/dev/null 2>&1 || true
+  systemctl disable "${LEGACY_SERVICE_NAME}.service" >/dev/null 2>&1 || true
+  rm -f "$LEGACY_UNIT_FILE"
+  systemctl daemon-reload
+  systemctl reset-failed "${LEGACY_SERVICE_NAME}.service" >/dev/null 2>&1 || true
+}
+
+migrate_legacy_directory() {
+  local name="$1"
+  local source_dir="$2"
+  local target_dir="$3"
+  local target_parent
+  target_parent="$(dirname "$target_dir")"
+  mkdir -p "$target_parent"
+
+  if [[ ! -d "$source_dir" ]]; then
+    echo "Legacy ${name} directory not found: ${source_dir}. Skipping."
+    return 0
+  fi
+
+  if [[ -e "$target_dir" ]]; then
+    if find "$target_dir" -mindepth 1 -print -quit 2>/dev/null | grep -q .; then
+      echo "Migration failed: target ${name} directory already exists and is not empty: ${target_dir}" >&2
+      echo "Please move or back up the target directory, then retry." >&2
+      exit 1
+    fi
+    if ! rmdir "$target_dir" 2>/dev/null; then
+      echo "Migration failed: target ${name} path exists but is not an empty directory: ${target_dir}" >&2
+      exit 1
+    fi
+  fi
+
+  echo "Migrating legacy ${name}: ${source_dir} -> ${target_dir}"
+  mv "$source_dir" "$target_dir"
+}
+
+migrate_legacy_data_if_requested() {
+  [[ "$MIGRATE_LEGACY" == "true" ]] || return 0
+
+  require_root
+  need_cmd systemctl
+
+  if ! systemctl cat "${LEGACY_SERVICE_NAME}.service" >/dev/null 2>&1; then
+    echo "Legacy service ${LEGACY_SERVICE_NAME} not found. Skipping legacy migration."
+    return 0
+  fi
+
+  if ! legacy_service_needs_migration; then
+    local working_dir
+    working_dir="$(normalize_unit_path "$(legacy_unit_working_dir || true)")"
+    echo "Legacy service exists but WorkingDirectory is not ${LEGACY_WORKING_DIR} (${working_dir:-unknown}). Skipping legacy migration."
+    return 0
+  fi
+
+  echo "Legacy service detected with WorkingDirectory=${LEGACY_WORKING_DIR}."
+  remove_legacy_service
+
+  mkdir -p "$DATA_DIR"
+
+  migrate_legacy_directory "data" "${LEGACY_WORKING_DIR}/data" "${DATA_DIR}/data"
+  migrate_legacy_directory "Mihomo" "${LEGACY_WORKING_DIR}/Mihomo" "${DATA_DIR}/Mihomo"
+  echo "Legacy data migration completed."
 }
 
 manifest_url() {
@@ -144,6 +246,7 @@ install_or_update() {
   need_cmd curl
   need_cmd tar
   need_cmd systemctl
+  migrate_legacy_data_if_requested
 
   local arch
   arch="$(detect_arch)"
@@ -161,9 +264,6 @@ install_or_update() {
   fi
   tar -xzf "$archive" -C "$INSTALL_DIR"
   chmod +x "${INSTALL_DIR}/CFFinderSwiftBackend"
-  if [[ ! -f "${DATA_DIR}/config.example.json" && -f "${INSTALL_DIR}/config.example.json" ]]; then
-    cp -f "${INSTALL_DIR}/config.example.json" "${DATA_DIR}/config.example.json"
-  fi
   write_unit
   systemctl daemon-reload
   systemctl enable "$SERVICE_NAME"
