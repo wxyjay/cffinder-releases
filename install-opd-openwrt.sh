@@ -80,6 +80,29 @@ extract_asset_names() {
   sed -n 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$1"
 }
 
+extract_asset_sha() {
+  manifest="$1"
+  asset="$2"
+  awk -v target="$asset" '
+    match($0, /"name"[[:space:]]*:[[:space:]]*"([^"]+)"/, m) { current=m[1] }
+    match($0, /"sha256"[[:space:]]*:[[:space:]]*"([^"]+)"/, m) && current == target { print m[1]; exit }
+  ' "$manifest"
+}
+
+sha256_file() {
+  file="$1"
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$file" | awk '{print $1}'
+    return 0
+  fi
+  if command -v openssl >/dev/null 2>&1; then
+    openssl dgst -sha256 "$file" | awk '{print $NF}'
+    return 0
+  fi
+  echo "Missing sha256sum or openssl for package verification." >&2
+  exit 1
+}
+
 select_asset() {
   manifest="$1"
   format="$2"
@@ -107,9 +130,17 @@ download_one() {
   tag="$1"
   asset="$2"
   out_dir="$3"
+  expected_sha="${4:-}"
   [ -n "$asset" ] || return 0
   url="https://github.com/${RELEASE_REPO}/releases/download/${tag}/${asset}"
   curl -fL "$url" -o "${out_dir}/${asset}"
+  if [ -n "$expected_sha" ]; then
+    actual_sha="$(sha256_file "${out_dir}/${asset}")"
+    if [ "$actual_sha" != "$expected_sha" ]; then
+      echo "SHA256 mismatch for ${asset}: got ${actual_sha}, expected ${expected_sha}" >&2
+      exit 1
+    fi
+  fi
   printf '%s\n' "${out_dir}/${asset}"
 }
 
@@ -133,9 +164,13 @@ install_or_update() {
   i18n_asset="$(select_asset "$manifest" "$format" "$target" i18n || true)"
   [ -n "$daemon_asset" ] || { echo "No OPD daemon package found for ${format}/${target}." >&2; exit 1; }
 
-  daemon_pkg="$(download_one "$tag" "$daemon_asset" "$tmp_dir")"
-  luci_pkg="$(download_one "$tag" "$luci_asset" "$tmp_dir" || true)"
-  i18n_pkg="$(download_one "$tag" "$i18n_asset" "$tmp_dir" || true)"
+  daemon_sha="$(extract_asset_sha "$manifest" "$daemon_asset" || true)"
+  luci_sha="$(extract_asset_sha "$manifest" "$luci_asset" || true)"
+  i18n_sha="$(extract_asset_sha "$manifest" "$i18n_asset" || true)"
+
+  daemon_pkg="$(download_one "$tag" "$daemon_asset" "$tmp_dir" "$daemon_sha")"
+  luci_pkg="$(download_one "$tag" "$luci_asset" "$tmp_dir" "$luci_sha" || true)"
+  i18n_pkg="$(download_one "$tag" "$i18n_asset" "$tmp_dir" "$i18n_sha" || true)"
 
   /etc/init.d/$SERVICE_NAME stop >/dev/null 2>&1 || true
   set -- "$daemon_pkg"
