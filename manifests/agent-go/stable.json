@@ -3,31 +3,31 @@
   "version": "0.1.0",
   "channel": "stable",
   "tag": "agent-go-v0.1.0",
-  "commit": "9f5ba8cab48bb95b37f02103f6153f51f57d74af",
+  "commit": "102a21fab29deb7add6cc9fe2a910a225c092b92",
   "assets": [
     {
       "name": "cf-finder-agent-0.1.0-linux-aarch64.tar.gz",
-      "sha256": "6fe1c7891f9c1192eab88756a035f1c7e76f1da1bc057254e20e6c5f24d6c5fe"
+      "sha256": "8e0076bb0c8b61b8da7d9cb7e41e2546c6582385382d74ea779f87764c560509"
     },
     {
       "name": "cf-finder-agent-0.1.0-linux-alpine-aarch64.tar.gz",
-      "sha256": "a0b5febb8b208345081048c1e3ae456e5a9d70a8bd097dbaf995824d017f581d"
+      "sha256": "0053980c1604675ad74a6e2226daf7b430a58a4e97cf3419298261c2423ea3b6"
     },
     {
       "name": "cf-finder-agent-0.1.0-linux-alpine-amd64.tar.gz",
-      "sha256": "b360ab093a3024d0c664e3b97060303b87956f4638b09f0f4b1ed08158ba40af"
+      "sha256": "afc4b617715b92d1513bb1eacb3d76812e14dcdf45ec25cd72d589b66b86da1e"
     },
     {
       "name": "cf-finder-agent-0.1.0-linux-amd64.tar.gz",
-      "sha256": "3441f238a6c9186c2ceae567172eb7d1732f9a691d1d79e67d03c509164e28f3"
+      "sha256": "97109ab96a254940804c2513235f3fd546bdf0c9f8ece74b5221ca89b00233cf"
     },
     {
       "name": "cf-finder-agent-0.1.0-linux-armv7.tar.gz",
-      "sha256": "67d1c12c683af5fd4e00bc9edc8898de458fca4635eb779c5c642bcd82b5624a"
+      "sha256": "c02e77e6f329653925e57f11f443b81615c8d74a8a338a871692e3946ded0840"
     },
     {
       "name": "cf-finder-agent-0.1.0.sha256",
-      "sha256": "d973d2a7781f226d815e4739578f4bcdaeb043016b242d1bfcf0d54afdf00755"
+      "sha256": "9f6cdc24be50b37f49c3f5e313c18eeba7135802bb780daab0d039fbe77ee869"
     }
   ]
 }
