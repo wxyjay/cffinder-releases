@@ -18,6 +18,15 @@ NAME=""
 NO_START=0
 INTERACTIVE=0
 WRITE_CONFIG=0
+TMP_DIR_TO_CLEAN=""
+
+cleanup_tmp_dir() {
+  if [[ -n "${TMP_DIR_TO_CLEAN:-}" ]]; then
+    rm -rf "$TMP_DIR_TO_CLEAN"
+  fi
+}
+
+trap cleanup_tmp_dir EXIT
 
 usage() {
   cat <<'EOF'
@@ -458,8 +467,8 @@ install_or_update() {
   ensure_script_dependencies
   local target tmp_dir archive
   target="$(detect_target)"
-  tmp_dir="$(mktemp -d)"
-  trap 'rm -rf "$tmp_dir"' EXIT
+  TMP_DIR_TO_CLEAN="$(mktemp -d)"
+  tmp_dir="$TMP_DIR_TO_CLEAN"
 
   echo "Installing CFFinder Agent (${BRANCH}, ${target})"
   archive="$(download_asset "$target" "$tmp_dir")"
