@@ -263,8 +263,22 @@ extract_asset_sha() {
   local manifest="$1"
   local asset="$2"
   awk -v target="$asset" '
-    match($0, /"name"[[:space:]]*:[[:space:]]*"([^"]+)"/, m) { current=m[1] }
-    match($0, /"sha256"[[:space:]]*:[[:space:]]*"([^"]+)"/, m) && current == target { print m[1]; exit }
+    {
+      line = $0
+      if (line ~ /"name"[[:space:]]*:[[:space:]]*"/) {
+        name = line
+        sub(/^.*"name"[[:space:]]*:[[:space:]]*"/, "", name)
+        sub(/".*$/, "", name)
+        current = name
+      }
+      if (current == target && line ~ /"sha256"[[:space:]]*:[[:space:]]*"/) {
+        sha = line
+        sub(/^.*"sha256"[[:space:]]*:[[:space:]]*"/, "", sha)
+        sub(/".*$/, "", sha)
+        print sha
+        exit
+      }
+    }
   ' "$manifest"
 }
 
@@ -302,7 +316,13 @@ download_asset() {
     exit 1
   fi
   local url="https://github.com/${RELEASE_REPO}/releases/download/${tag}/${asset}"
-  curl -fL "$url" -o "${tmp_dir}/${asset}"
+  if ! curl -fL "$url" -o "${tmp_dir}/${asset}"; then
+    echo "Failed to download ${asset} from release ${tag}." >&2
+    echo "Manifest URL: $(manifest_url "$channel")" >&2
+    echo "Asset URL   : ${url}" >&2
+    echo "If this is the stable branch, make sure the Agent Go main workflow has published this release." >&2
+    exit 1
+  fi
   expected_sha="$(extract_asset_sha "$manifest" "$asset" || true)"
   if [[ -n "$expected_sha" ]]; then
     actual_sha="$(sha256_file "${tmp_dir}/${asset}")"
