@@ -7,46 +7,48 @@ stdin available for menu input.
 
 ## Swift Backend
 
+Run these commands from a root shell.
+
 Install or update, stable:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-swift-backend.sh | sudo bash -s -- --branch main --install
+curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-swift-backend.sh | bash -s -- --branch main --install
 ```
 
 Install or update, debug:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/debug/install-swift-backend.sh | sudo bash -s -- --branch debug --install
+curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/debug/install-swift-backend.sh | bash -s -- --branch debug --install
 ```
 
 Install with legacy data migration from `/download/CFFinderSwiftBackend`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-swift-backend.sh | sudo bash -s -- --branch main --install --migrate-legacy
+curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-swift-backend.sh | bash -s -- --branch main --install --migrate-legacy
 ```
 
 Show status:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-swift-backend.sh | sudo bash -s -- --branch main --status
+curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-swift-backend.sh | bash -s -- --branch main --status
 ```
 
 Uninstall and keep data:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-swift-backend.sh | sudo bash -s -- --branch main --uninstall
+curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-swift-backend.sh | bash -s -- --branch main --uninstall
 ```
 
 Purge program and data:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-swift-backend.sh | sudo bash -s -- --branch main --purge
+curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-swift-backend.sh | bash -s -- --branch main --purge
 ```
 
 Interactive menu:
 
 ```bash
-tmp="$(mktemp)" && curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-swift-backend.sh -o "$tmp" && sudo bash "$tmp" --branch main --interactive; rm -f "$tmp"
+tmp="$(mktemp)" && curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-swift-backend.sh -o "$tmp" && bash "$tmp" --branch main --interactive; rm -f "$tmp"
 ```
 
 ## Linux Agent
@@ -54,49 +56,49 @@ tmp="$(mktemp)" && curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-
 Install a new Linux Agent, stable:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh | sudo bash -s -- --branch main --install --hub-url 'https://your-backend.example.com:9899' --agents-token 'YOUR_AGENTS_TOKEN'
+curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh | bash -s -- --branch main --install --hub-url 'https://your-backend.example.com:9899' --agents-token 'YOUR_AGENTS_TOKEN'
 ```
 
 Install a new Linux Agent, debug:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/debug/install-agent-go.sh | sudo bash -s -- --branch debug --install --hub-url 'https://your-backend.example.com:9899' --agents-token 'YOUR_AGENTS_TOKEN'
+curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/debug/install-agent-go.sh | bash -s -- --branch debug --install --hub-url 'https://your-backend.example.com:9899' --agents-token 'YOUR_AGENTS_TOKEN'
 ```
 
 Reinstall and reuse an existing Agent identity:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh | sudo bash -s -- --branch main --install --hub-url 'https://your-backend.example.com:9899' --agents-token 'YOUR_AGENTS_TOKEN' --agent-id 'EXISTING_AGENT_ID' --agent-secret 'EXISTING_AGENT_SECRET' --name 'Existing Agent Name'
+curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh | bash -s -- --branch main --install --hub-url 'https://your-backend.example.com:9899' --agents-token 'YOUR_AGENTS_TOKEN' --agent-id 'EXISTING_AGENT_ID' --agent-secret 'EXISTING_AGENT_SECRET' --name 'Existing Agent Name'
 ```
 
 Install or update without starting service:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh | sudo bash -s -- --branch main --install --hub-url 'https://your-backend.example.com:9899' --agents-token 'YOUR_AGENTS_TOKEN' --no-start
+curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh | bash -s -- --branch main --install --hub-url 'https://your-backend.example.com:9899' --agents-token 'YOUR_AGENTS_TOKEN' --no-start
 ```
 
 Show status:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh | sudo bash -s -- --branch main --status
+curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh | bash -s -- --branch main --status
 ```
 
 Uninstall and keep config/data:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh | sudo bash -s -- --branch main --uninstall
+curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh | bash -s -- --branch main --uninstall
 ```
 
 Purge program, config and data:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh | sudo bash -s -- --branch main --purge
+curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh | bash -s -- --branch main --purge
 ```
 
 Interactive menu:
 
 ```bash
-tmp="$(mktemp)" && curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh -o "$tmp" && sudo bash "$tmp" --branch main --interactive; rm -f "$tmp"
+tmp="$(mktemp)" && curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-agent-go.sh -o "$tmp" && bash "$tmp" --branch main --interactive; rm -f "$tmp"
 ```
 
 ## OpenWrt OPD

@@ -69,13 +69,137 @@ fi
 
 require_root() {
   if [[ "$(id -u)" != "0" ]]; then
-    echo "Please run as root, for example: curl -fsSL <script-url> | sudo bash -s -- --install" >&2
+    echo "This installer must be run as root." >&2
+    echo "Switch to root first, then run without sudo. Example:" >&2
+    echo "  curl -fsSL <script-url> | bash -s -- --install" >&2
     exit 1
   fi
 }
 
-need_cmd() {
-  command -v "$1" >/dev/null 2>&1 || { echo "Missing command: $1" >&2; exit 1; }
+missing_commands() {
+  local missing=()
+  local cmd
+  for cmd in "$@"; do
+    command -v "$cmd" >/dev/null 2>&1 || missing+=("$cmd")
+  done
+  printf '%s\n' "${missing[@]}"
+}
+
+package_manager() {
+  if command -v apt-get >/dev/null 2>&1; then
+    echo "apt"
+  elif command -v apk >/dev/null 2>&1; then
+    echo "apk"
+  elif command -v dnf >/dev/null 2>&1; then
+    echo "dnf"
+  elif command -v yum >/dev/null 2>&1; then
+    echo "yum"
+  else
+    echo "none"
+  fi
+}
+
+package_for_command() {
+  local manager="$1"
+  local cmd="$2"
+  case "$manager:$cmd" in
+    apk:sha256sum|apk:install|apk:mktemp) echo "coreutils" ;;
+    apt:sha256sum|apt:install|apt:mktemp) echo "coreutils" ;;
+    dnf:sha256sum|dnf:install|dnf:mktemp) echo "coreutils" ;;
+    yum:sha256sum|yum:install|yum:mktemp) echo "coreutils" ;;
+    *) echo "$cmd" ;;
+  esac
+}
+
+install_packages() {
+  local manager="$1"
+  shift
+  case "$manager" in
+    apt)
+      apt-get update
+      DEBIAN_FRONTEND=noninteractive apt-get install -y "$@"
+      ;;
+    apk)
+      apk add --no-cache "$@"
+      ;;
+    dnf)
+      dnf install -y "$@"
+      ;;
+    yum)
+      yum install -y "$@"
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+ensure_script_dependencies() {
+  local required=(curl tar uname grep sed awk mktemp chmod mkdir rm cp install)
+  local missing=()
+  local cmd
+  while IFS= read -r cmd; do
+    [[ -n "$cmd" ]] && missing+=("$cmd")
+  done < <(missing_commands "${required[@]}")
+
+  if ! command -v sha256sum >/dev/null 2>&1 \
+    && ! command -v shasum >/dev/null 2>&1 \
+    && ! command -v openssl >/dev/null 2>&1; then
+    missing+=("sha256sum")
+  fi
+
+  [[ ${#missing[@]} -eq 0 ]] && return 0
+
+  echo "Missing required command(s): ${missing[*]}" >&2
+  local manager
+  manager="$(package_manager)"
+  if [[ "$manager" == "none" ]]; then
+    echo "No supported package manager found. Please install the missing command(s), then rerun." >&2
+    exit 1
+  fi
+
+  local packages=()
+  local pkg exists
+  for cmd in "${missing[@]}"; do
+    pkg="$(package_for_command "$manager" "$cmd")"
+    exists=0
+    for item in "${packages[@]:-}"; do
+      [[ "$item" == "$pkg" ]] && exists=1 && break
+    done
+    [[ "$exists" -eq 0 ]] && packages+=("$pkg")
+  done
+
+  if [[ -t 0 ]]; then
+    local answer
+    read -r -p "Install missing package(s) now: ${packages[*]}? [y/N] " answer
+    if [[ ! "$answer" =~ ^[Yy]$ ]]; then
+      echo "Cancelled. Please install missing dependencies, then rerun." >&2
+      exit 0
+    fi
+  else
+    echo "Non-interactive mode cannot ask to install dependencies." >&2
+    echo "Please install package(s): ${packages[*]}, then rerun." >&2
+    exit 1
+  fi
+
+  if ! install_packages "$manager" "${packages[@]}"; then
+    echo "Failed to install required package(s): ${packages[*]}" >&2
+    exit 1
+  fi
+
+  missing=()
+  while IFS= read -r cmd; do
+    [[ -n "$cmd" ]] && missing+=("$cmd")
+  done < <(missing_commands "${required[@]}")
+  if ! command -v sha256sum >/dev/null 2>&1 \
+    && ! command -v shasum >/dev/null 2>&1 \
+    && ! command -v openssl >/dev/null 2>&1; then
+    missing+=("sha256sum")
+  fi
+  if [[ ${#missing[@]} -gt 0 ]]; then
+    echo "Still missing required command(s): ${missing[*]}" >&2
+    exit 1
+  fi
 }
 
 detect_arch() {
@@ -331,9 +455,7 @@ enable_and_start() {
 }
 
 install_or_update() {
-  require_root
-  need_cmd curl
-  need_cmd tar
+  ensure_script_dependencies
   local target tmp_dir archive
   target="$(detect_target)"
   tmp_dir="$(mktemp -d)"
@@ -432,10 +554,25 @@ interactive_menu() {
 }
 
 case "$ACTION" in
-  install) install_or_update ;;
-  uninstall) uninstall_keep_data ;;
-  purge) purge_all ;;
-  status) show_status ;;
-  interactive) interactive_menu ;;
+  install)
+    require_root
+    install_or_update
+    ;;
+  uninstall)
+    require_root
+    uninstall_keep_data
+    ;;
+  purge)
+    require_root
+    purge_all
+    ;;
+  status)
+    require_root
+    show_status
+    ;;
+  interactive)
+    require_root
+    interactive_menu
+    ;;
   *) usage; exit 1 ;;
 esac

@@ -1,0 +1,25 @@
+{
+  "project": "swift-backend",
+  "version": "0.1.0",
+  "channel": "stable",
+  "tag": "swift-backend-v0.1.0",
+  "commit": "0395dacf7d095aa5f18ea98823e7348280c7c7fc",
+  "assets": [
+    {
+      "name": "CFFinderSwiftBackend-0.1.0-linux-aarch64.sha256",
+      "sha256": "41131c2936806266ce4dcd957e810cdb1426bdfa0ac0b14f115d81c5cf2e264f"
+    },
+    {
+      "name": "CFFinderSwiftBackend-0.1.0-linux-aarch64.tar.gz",
+      "sha256": "06826fe40b78e9a0ff5d6cbb4338517e966885dc072f42aba5738bf89927a4b8"
+    },
+    {
+      "name": "CFFinderSwiftBackend-0.1.0-linux-amd64.sha256",
+      "sha256": "30c495eac9e10475e2cc158eeca89b73da03deff0dac0b15d151e06fbe39e797"
+    },
+    {
+      "name": "CFFinderSwiftBackend-0.1.0-linux-amd64.tar.gz",
+      "sha256": "dea8a4a6d5a6f05d71f2465eec2b75c29f662659054541511d459aead32350b6"
+    }
+  ]
+}
