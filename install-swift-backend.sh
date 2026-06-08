@@ -13,6 +13,15 @@ LEGACY_UNIT_FILE="/etc/systemd/system/${LEGACY_SERVICE_NAME}.service"
 BRANCH="main"
 ACTION=""
 MIGRATE_LEGACY="false"
+TMP_DIR_TO_CLEAN=""
+
+cleanup_tmp_dir() {
+  if [[ -n "${TMP_DIR_TO_CLEAN:-}" ]]; then
+    rm -rf "$TMP_DIR_TO_CLEAN"
+  fi
+}
+
+trap cleanup_tmp_dir EXIT
 
 usage() {
   cat <<'EOF'
@@ -460,8 +469,8 @@ install_or_update() {
   local arch
   arch="$(detect_arch)"
   local tmp_dir
-  tmp_dir="$(mktemp -d)"
-  trap 'rm -rf "$tmp_dir"' EXIT
+  TMP_DIR_TO_CLEAN="$(mktemp -d)"
+  tmp_dir="$TMP_DIR_TO_CLEAN"
 
   echo "Installing ${DISPLAY_NAME} (${BRANCH}, ${arch})"
   local archive
