@@ -89,7 +89,167 @@ fi
 
 require_root() {
   if [[ "$(id -u)" != "0" ]]; then
-    echo "Please run as root, for example: curl -fsSL <script-url> | sudo bash -s -- --install" >&2
+    echo "Please run as root. Switch to root first, then run the install command without sudo." >&2
+    exit 1
+  fi
+}
+
+missing_commands() {
+  local missing=()
+  local cmd
+  for cmd in "$@"; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+      missing+=("$cmd")
+    fi
+  done
+  printf '%s\n' "${missing[@]}"
+}
+
+have_sha256_tool() {
+  command -v sha256sum >/dev/null 2>&1 ||
+    command -v shasum >/dev/null 2>&1 ||
+    command -v openssl >/dev/null 2>&1
+}
+
+install_missing_dependencies() {
+  local missing=("$@")
+  local packages=()
+  local cmd
+
+  if command -v apt-get >/dev/null 2>&1; then
+    for cmd in "${missing[@]}"; do
+      case "$cmd" in
+        curl) packages+=("curl") ;;
+        tar) packages+=("tar") ;;
+        systemctl) packages+=("systemd") ;;
+        awk) packages+=("mawk") ;;
+        sed) packages+=("sed") ;;
+        grep) packages+=("grep") ;;
+        find) packages+=("findutils") ;;
+        shasum) packages+=("perl") ;;
+        sha256-tool|sha256sum|openssl) packages+=("openssl") ;;
+        mktemp|head|dirname|mv|cp|rm|chmod|mkdir|cat|id|uname) packages+=("coreutils") ;;
+        *) packages+=("$cmd") ;;
+      esac
+    done
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${packages[@]}"
+    return
+  fi
+  if command -v apk >/dev/null 2>&1; then
+    for cmd in "${missing[@]}"; do
+      case "$cmd" in
+        curl) packages+=("curl") ;;
+        tar) packages+=("tar") ;;
+        systemctl) packages+=("systemd") ;;
+        awk) packages+=("gawk") ;;
+        sed) packages+=("sed") ;;
+        grep) packages+=("grep") ;;
+        find) packages+=("findutils") ;;
+        shasum) packages+=("perl") ;;
+        sha256-tool|sha256sum|openssl) packages+=("openssl") ;;
+        mktemp|head|dirname|mv|cp|rm|chmod|mkdir|cat|id|uname) packages+=("coreutils") ;;
+        *) packages+=("$cmd") ;;
+      esac
+    done
+    apk add --no-cache "${packages[@]}"
+    return
+  fi
+  if command -v dnf >/dev/null 2>&1; then
+    for cmd in "${missing[@]}"; do
+      case "$cmd" in
+        curl) packages+=("curl") ;;
+        tar) packages+=("tar") ;;
+        systemctl) packages+=("systemd") ;;
+        awk) packages+=("gawk") ;;
+        sed) packages+=("sed") ;;
+        grep) packages+=("grep") ;;
+        find) packages+=("findutils") ;;
+        shasum) packages+=("perl-Digest-SHA") ;;
+        sha256-tool|sha256sum|openssl) packages+=("openssl") ;;
+        mktemp|head|dirname|mv|cp|rm|chmod|mkdir|cat|id|uname) packages+=("coreutils") ;;
+        *) packages+=("$cmd") ;;
+      esac
+    done
+    dnf install -y "${packages[@]}"
+    return
+  fi
+  if command -v yum >/dev/null 2>&1; then
+    for cmd in "${missing[@]}"; do
+      case "$cmd" in
+        curl) packages+=("curl") ;;
+        tar) packages+=("tar") ;;
+        systemctl) packages+=("systemd") ;;
+        awk) packages+=("gawk") ;;
+        sed) packages+=("sed") ;;
+        grep) packages+=("grep") ;;
+        find) packages+=("findutils") ;;
+        shasum) packages+=("perl-Digest-SHA") ;;
+        sha256-tool|sha256sum|openssl) packages+=("openssl") ;;
+        mktemp|head|dirname|mv|cp|rm|chmod|mkdir|cat|id|uname) packages+=("coreutils") ;;
+        *) packages+=("$cmd") ;;
+      esac
+    done
+    yum install -y "${packages[@]}"
+    return
+  fi
+
+  echo "No supported package manager found to install missing dependencies: ${missing[*]}" >&2
+  exit 1
+}
+
+ensure_dependencies() {
+  local profile="${1:-install}"
+  local required=(mktemp sed awk grep head dirname find mv cp rm chmod mkdir cat id uname)
+  local needs_sha="false"
+  case "$profile" in
+    install)
+      required+=(curl tar systemctl)
+      needs_sha="true"
+      ;;
+    systemd)
+      required+=(systemctl)
+      ;;
+    *)
+      echo "Unsupported dependency profile: ${profile}" >&2
+      exit 1
+      ;;
+  esac
+
+  local missing=()
+  while IFS= read -r item; do
+    [[ -n "$item" ]] && missing+=("$item")
+  done < <(missing_commands "${required[@]}")
+  if [[ "$needs_sha" == "true" ]] && ! have_sha256_tool; then
+    missing+=("sha256-tool")
+  fi
+
+  if [[ "${#missing[@]}" -eq 0 ]]; then
+    return
+  fi
+
+  echo "Missing required dependencies: ${missing[*]}" >&2
+  if [[ -t 0 ]]; then
+    read -r -p "Install missing dependencies now? [Y/n] " answer
+    if [[ "$answer" =~ ^[Nn]$ ]]; then
+      echo "Dependency installation skipped. Exiting." >&2
+      exit 1
+    fi
+    install_missing_dependencies "${missing[@]}"
+  else
+    echo "Non-interactive mode cannot install dependencies safely. Please install them first, then rerun." >&2
+    exit 1
+  fi
+
+  local still_missing=()
+  while IFS= read -r item; do
+    [[ -n "$item" ]] && still_missing+=("$item")
+  done < <(missing_commands "${required[@]}")
+  if [[ "$needs_sha" == "true" ]] && ! have_sha256_tool; then
+    still_missing+=("sha256-tool")
+  fi
+  if [[ "${#still_missing[@]}" -ne 0 ]]; then
+    echo "Dependencies are still missing after installation: ${still_missing[*]}" >&2
     exit 1
   fi
 }
@@ -104,6 +264,24 @@ detect_arch() {
 
 need_cmd() {
   command -v "$1" >/dev/null 2>&1 || { echo "Missing command: $1" >&2; exit 1; }
+}
+
+sha256_file() {
+  local file="$1"
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$file" | awk '{print $1}'
+    return 0
+  fi
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$file" | awk '{print $1}'
+    return 0
+  fi
+  if command -v openssl >/dev/null 2>&1; then
+    openssl dgst -sha256 "$file" | awk '{print $NF}'
+    return 0
+  fi
+  echo "Missing sha256sum, shasum, or openssl for package verification." >&2
+  exit 1
 }
 
 normalize_unit_path() {
@@ -198,6 +376,26 @@ manifest_url() {
   printf 'https://raw.githubusercontent.com/%s/%s/manifests/swift-backend/%s.json' "$RELEASE_REPO" "$BRANCH" "$channel"
 }
 
+extract_asset_sha() {
+  local manifest="$1"
+  local asset="$2"
+  awk -v target="$asset" '
+    index($0, "\"name\"") {
+      line=$0
+      sub(/^.*"name"[[:space:]]*:[[:space:]]*"/, "", line)
+      sub(/".*$/, "", line)
+      current=line
+    }
+    index($0, "\"sha256\"") && current == target {
+      line=$0
+      sub(/^.*"sha256"[[:space:]]*:[[:space:]]*"/, "", line)
+      sub(/".*$/, "", line)
+      print line
+      exit
+    }
+  ' "$manifest"
+}
+
 download_asset() {
   local arch="$1"
   local channel="stable"
@@ -206,6 +404,8 @@ download_asset() {
   local manifest="${tmp_dir}/manifest.json"
   local tag
   local asset
+  local expected_sha
+  local archive
 
   curl -fsSL "$(manifest_url "$channel")" -o "$manifest"
   tag="$(sed -n 's/.*"tag"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$manifest" | head -n 1)"
@@ -214,9 +414,21 @@ download_asset() {
     echo "No swift-backend asset found for arch=${arch} in ${channel} manifest." >&2
     exit 1
   fi
+  expected_sha="$(extract_asset_sha "$manifest" "$asset" || true)"
+  if [[ -z "$expected_sha" ]]; then
+    echo "No SHA256 found for asset=${asset} in ${channel} manifest." >&2
+    exit 1
+  fi
   local url="https://github.com/${RELEASE_REPO}/releases/download/${tag}/${asset}"
-  curl -fL "$url" -o "${tmp_dir}/${asset}"
-  printf '%s\n' "${tmp_dir}/${asset}"
+  archive="${tmp_dir}/${asset}"
+  curl -fL "$url" -o "$archive"
+  local actual_sha
+  actual_sha="$(sha256_file "$archive")"
+  if [[ "$actual_sha" != "$expected_sha" ]]; then
+    echo "SHA256 mismatch for ${asset}: got ${actual_sha}, expected ${expected_sha}" >&2
+    exit 1
+  fi
+  printf '%s\n' "$archive"
 }
 
 write_unit() {
@@ -242,10 +454,7 @@ EOF
 }
 
 install_or_update() {
-  require_root
-  need_cmd curl
-  need_cmd tar
-  need_cmd systemctl
+  ensure_dependencies install
   migrate_legacy_data_if_requested
 
   local arch
@@ -272,8 +481,7 @@ install_or_update() {
 }
 
 uninstall_keep_data() {
-  require_root
-  need_cmd systemctl
+  ensure_dependencies systemd
   systemctl stop "$SERVICE_NAME" >/dev/null 2>&1 || true
   systemctl disable "$SERVICE_NAME" >/dev/null 2>&1 || true
   rm -f "$UNIT_FILE"
@@ -289,7 +497,7 @@ purge_all() {
 }
 
 show_status() {
-  need_cmd systemctl
+  ensure_dependencies systemd
   systemctl --no-pager status "$SERVICE_NAME" || true
 }
 
@@ -320,6 +528,8 @@ if [[ -z "$ACTION" ]]; then
     ACTION="install"
   fi
 fi
+
+require_root
 
 case "$ACTION" in
   install) install_or_update ;;
