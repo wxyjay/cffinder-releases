@@ -160,6 +160,31 @@ download_one() {
   printf '%s\n' "${out_dir}/${asset}"
 }
 
+start_service_after_install() {
+  if [ ! -x "/etc/init.d/$SERVICE_NAME" ]; then
+    echo "OPD init script not found; package may not have been installed." >&2
+    return 0
+  fi
+  /etc/init.d/$SERVICE_NAME stop >/dev/null 2>&1 || true
+  /etc/init.d/$SERVICE_NAME start || true
+}
+
+show_status() {
+  if [ ! -x "/etc/init.d/$SERVICE_NAME" ]; then
+    echo "not installed"
+    return 0
+  fi
+  if status_output="$(/etc/init.d/$SERVICE_NAME status 2>&1)"; then
+    printf '%s\n' "$status_output"
+    return 0
+  fi
+  if pidof "$SERVICE_NAME" >/dev/null 2>&1; then
+    echo "running"
+  else
+    echo "not running"
+  fi
+}
+
 install_or_update() {
   need_cmd curl
   format="$(detect_pkg_format)"
@@ -193,19 +218,17 @@ install_or_update() {
   [ -n "$luci_pkg" ] && set -- "$@" "$luci_pkg"
   [ -n "$i18n_pkg" ] && set -- "$@" "$i18n_pkg"
   if [ "$format" = "apk" ]; then
-    apk update || true
     apk add --allow-untrusted "$@"
   else
-    opkg update || true
     opkg install "$@"
   fi
   /etc/init.d/rpcd restart >/dev/null 2>&1 || true
   /etc/init.d/uhttpd restart >/dev/null 2>&1 || true
   /etc/init.d/$SERVICE_NAME enable >/dev/null 2>&1 || true
   if [ "$NO_START" -eq 0 ]; then
-    /etc/init.d/$SERVICE_NAME restart || /etc/init.d/$SERVICE_NAME start || true
+    start_service_after_install
   fi
-  /etc/init.d/$SERVICE_NAME status || true
+  show_status
 }
 
 remove_packages() {
@@ -234,10 +257,6 @@ purge_all() {
   rm -f /etc/config/cf-finder-opd
   rm -rf /etc/cf-finder-opd /var/run/cf-finder-opd
   echo "Removed OPD packages, config and data."
-}
-
-show_status() {
-  /etc/init.d/$SERVICE_NAME status || true
 }
 
 interactive_menu() {
