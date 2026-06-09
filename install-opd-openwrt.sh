@@ -7,7 +7,7 @@ BRANCH="main"
 ACTION=""
 NO_START=0
 USE_PROXY=0
-GITHUB_PROXY_PREFIX="${GITHUB_PROXY_PREFIX:-https://ghproxy.net/}"
+GITHUB_RELEASE_CDN_PREFIX="${GITHUB_RELEASE_CDN_PREFIX:-https://ghfast.top/}"
 
 usage() {
   cat <<'EOF'
@@ -20,7 +20,7 @@ Actions:
   --purge        Remove packages plus config/data.
   --status       Show service status.
   --interactive  Show menu.
-  --use-proxy    Download GitHub resources through ghproxy.net.
+  --use-proxy    Download release assets through ghfast.top.
 EOF
 }
 
@@ -77,14 +77,16 @@ detect_target() {
 
 manifest_url() {
   channel="$1"
-  raw_url="$(printf 'https://raw.githubusercontent.com/%s/%s/manifests/opd/%s.json' "$RELEASE_REPO" "$BRANCH" "$channel")"
-  download_url "$raw_url"
+  printf 'https://raw.githubusercontent.com/%s/%s/manifests/opd/%s.json' "$RELEASE_REPO" "$BRANCH" "$channel"
 }
 
-download_url() {
+release_asset_url() {
   raw_url="$1"
   if [ "$USE_PROXY" -eq 1 ]; then
-    printf '%s%s' "$GITHUB_PROXY_PREFIX" "$raw_url"
+    case "$GITHUB_RELEASE_CDN_PREFIX" in
+      */) printf '%s%s' "$GITHUB_RELEASE_CDN_PREFIX" "$raw_url" ;;
+      *) printf '%s/%s' "$GITHUB_RELEASE_CDN_PREFIX" "$raw_url" ;;
+    esac
   else
     printf '%s' "$raw_url"
   fi
@@ -146,7 +148,7 @@ download_one() {
   out_dir="$3"
   expected_sha="${4:-}"
   [ -n "$asset" ] || return 0
-  url="$(download_url "https://github.com/${RELEASE_REPO}/releases/download/${tag}/${asset}")"
+  url="$(release_asset_url "https://github.com/${RELEASE_REPO}/releases/download/${tag}/${asset}")"
   curl -fL "$url" -o "${out_dir}/${asset}"
   if [ -n "$expected_sha" ]; then
     actual_sha="$(sha256_file "${out_dir}/${asset}")"

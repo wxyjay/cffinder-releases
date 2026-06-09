@@ -109,7 +109,7 @@ Install or update, stable:
 curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-opd-openwrt.sh | sh -s -- --branch main --install
 ```
 
-Install or update, stable through GitHub proxy:
+Install or update, stable with accelerated downloads:
 
 ```sh
 curl -fsSL https://ghproxy.net/https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-opd-openwrt.sh | sh -s -- --branch main --install --use-proxy
@@ -121,7 +121,7 @@ Install or update, debug:
 curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/debug/install-opd-openwrt.sh | sh -s -- --branch debug --install
 ```
 
-Install or update, debug through GitHub proxy:
+Install or update, debug with accelerated downloads:
 
 ```sh
 curl -fsSL https://ghproxy.net/https://raw.githubusercontent.com/wxyjay/cffinder-releases/debug/install-opd-openwrt.sh | sh -s -- --branch debug --install --use-proxy
