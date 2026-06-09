@@ -218,9 +218,9 @@ install_or_update() {
   [ -n "$luci_pkg" ] && set -- "$@" "$luci_pkg"
   [ -n "$i18n_pkg" ] && set -- "$@" "$i18n_pkg"
   if [ "$format" = "apk" ]; then
-    apk add --allow-untrusted "$@"
+    apk add --allow-untrusted --force-overwrite --upgrade "$@"
   else
-    opkg install "$@"
+    opkg install --force-reinstall "$@"
   fi
   /etc/init.d/rpcd restart >/dev/null 2>&1 || true
   /etc/init.d/uhttpd restart >/dev/null 2>&1 || true
