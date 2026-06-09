@@ -6,11 +6,13 @@ RELEASE_REPO="${RELEASE_REPO:-wxyjay/cffinder-releases}"
 BRANCH="main"
 ACTION=""
 NO_START=0
+USE_PROXY=0
+GITHUB_PROXY_PREFIX="${GITHUB_PROXY_PREFIX:-https://ghproxy.net/}"
 
 usage() {
   cat <<'EOF'
 Usage:
-  install-opd-openwrt.sh [--branch main|debug] [--install|--uninstall|--purge|--status|--interactive] [--no-start]
+  install-opd-openwrt.sh [--branch main|debug] [--install|--uninstall|--purge|--status|--interactive] [--no-start] [--use-proxy]
 
 Actions:
   --install      Install or update OPD daemon and LuCI packages.
@@ -18,6 +20,7 @@ Actions:
   --purge        Remove packages plus config/data.
   --status       Show service status.
   --interactive  Show menu.
+  --use-proxy    Download GitHub resources through ghproxy.net.
 EOF
 }
 
@@ -30,6 +33,7 @@ while [ "$#" -gt 0 ]; do
     --status|status) ACTION="status"; shift ;;
     --interactive) ACTION="interactive"; shift ;;
     --no-start) NO_START=1; shift ;;
+    --use-proxy|--proxy) USE_PROXY=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unknown argument: $1" >&2; usage; exit 1 ;;
   esac
@@ -73,7 +77,17 @@ detect_target() {
 
 manifest_url() {
   channel="$1"
-  printf 'https://raw.githubusercontent.com/%s/%s/manifests/opd/%s.json' "$RELEASE_REPO" "$BRANCH" "$channel"
+  raw_url="$(printf 'https://raw.githubusercontent.com/%s/%s/manifests/opd/%s.json' "$RELEASE_REPO" "$BRANCH" "$channel")"
+  download_url "$raw_url"
+}
+
+download_url() {
+  raw_url="$1"
+  if [ "$USE_PROXY" -eq 1 ]; then
+    printf '%s%s' "$GITHUB_PROXY_PREFIX" "$raw_url"
+  else
+    printf '%s' "$raw_url"
+  fi
 }
 
 extract_asset_names() {
@@ -132,7 +146,7 @@ download_one() {
   out_dir="$3"
   expected_sha="${4:-}"
   [ -n "$asset" ] || return 0
-  url="https://github.com/${RELEASE_REPO}/releases/download/${tag}/${asset}"
+  url="$(download_url "https://github.com/${RELEASE_REPO}/releases/download/${tag}/${asset}")"
   curl -fL "$url" -o "${out_dir}/${asset}"
   if [ -n "$expected_sha" ]; then
     actual_sha="$(sha256_file "${out_dir}/${asset}")"
