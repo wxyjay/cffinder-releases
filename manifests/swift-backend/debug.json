@@ -1,25 +1,25 @@
 {
   "project": "swift-backend",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "channel": "debug",
-  "tag": "swift-backend-debug-v0.1.2",
-  "commit": "12b0370688e1a920ce81f65d0f11a7c79f171266",
+  "tag": "swift-backend-debug-v0.1.3",
+  "commit": "dcb1a7f7a8fc04d816cd007c00a020d41bf084b2",
   "assets": [
     {
-      "name": "CFFinderSwiftBackend-0.1.2-linux-aarch64.sha256",
-      "sha256": "6e744eda083f7cdd1dd886bfd7c4f21cb85e2291732a8cff440f68818e565693"
+      "name": "CFFinderSwiftBackend-0.1.3-linux-aarch64.sha256",
+      "sha256": "48e328fe72b46841c424f0f98eb1114167acfdd9691378033ef74318109e79ba"
     },
     {
-      "name": "CFFinderSwiftBackend-0.1.2-linux-aarch64.tar.gz",
-      "sha256": "303d78379f4530d4132302f6f7c6d0adaa7f00ad372a26f657f1cb1a63bef25b"
+      "name": "CFFinderSwiftBackend-0.1.3-linux-aarch64.tar.gz",
+      "sha256": "e84881c60b9d0b1af2ffdda2d531c114f83ad68492e824b8e4a9f80037fa1637"
     },
     {
-      "name": "CFFinderSwiftBackend-0.1.2-linux-amd64.sha256",
-      "sha256": "bebd6ae74f4be064764af2b8a4cda9da4efa3e1c1d3c973243110ceaa1160c25"
+      "name": "CFFinderSwiftBackend-0.1.3-linux-amd64.sha256",
+      "sha256": "71cc405a12bc75f2b86c60e45b93e4701dbaecbc42b169de66b4de09fa084976"
     },
     {
-      "name": "CFFinderSwiftBackend-0.1.2-linux-amd64.tar.gz",
-      "sha256": "da65f49aecd77190ec9b3c57fc39aefd2fbe6b6f1b74d8d2e5457c479e02c4b4"
+      "name": "CFFinderSwiftBackend-0.1.3-linux-amd64.tar.gz",
+      "sha256": "1c136c69027fbf5f4d2198307ab0dc7820906211c4f35dde2573e255ac23a6df"
     }
   ]
 }
