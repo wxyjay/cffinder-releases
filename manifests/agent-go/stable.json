@@ -1,33 +1,33 @@
 {
   "project": "agent-go",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "channel": "stable",
-  "tag": "agent-go-v0.1.1",
-  "commit": "460b6208461bd6bd07eaad6c9c1986a364b39ea7",
+  "tag": "agent-go-v0.1.2",
+  "commit": "a03cd5d08d35628aeeb8da8ad8189c744a09a330",
   "assets": [
     {
-      "name": "cf-finder-agent-0.1.1-linux-aarch64.tar.gz",
-      "sha256": "ae28a0c3f3e4496c234c8c3e77b735be919d5f47dcee71dc453db5bef41d752c"
+      "name": "cf-finder-agent-0.1.2-linux-aarch64.tar.gz",
+      "sha256": "a32da200076189b4a93eb1df8ef6cb0175c11fb2d7b8a10c0c7d31dc903b3354"
     },
     {
-      "name": "cf-finder-agent-0.1.1-linux-alpine-aarch64.tar.gz",
-      "sha256": "df490d30bd19fe7f66bab4ea74d21753baf59a4d9f8630e7304c7654cb64b1d8"
+      "name": "cf-finder-agent-0.1.2-linux-alpine-aarch64.tar.gz",
+      "sha256": "245c0d0509ac565c0ffdd30f3b4304b0c502005f1ada05843feb28446df62ddc"
     },
     {
-      "name": "cf-finder-agent-0.1.1-linux-alpine-amd64.tar.gz",
-      "sha256": "8d3ddb7b0f7eb4c58886c093fdadf1f7fdb9967f3828c4605de666ef74e5aa1c"
+      "name": "cf-finder-agent-0.1.2-linux-alpine-amd64.tar.gz",
+      "sha256": "905355f5a5f2b94d75f998012bb893bf62a6459fe3b9d6da7e0191f2954125ce"
     },
     {
-      "name": "cf-finder-agent-0.1.1-linux-amd64.tar.gz",
-      "sha256": "034265c6e7bf2edc9c6b3901e4f5d646331cf692e6df3f9c9b47d9c84d8b9e11"
+      "name": "cf-finder-agent-0.1.2-linux-amd64.tar.gz",
+      "sha256": "57fd864628e3db68979df38a1aec306140721d03bf79ca5156c6a5e7fd517f7f"
     },
     {
-      "name": "cf-finder-agent-0.1.1-linux-armv7.tar.gz",
-      "sha256": "38bebba17e9d48a5cfd939ac981a273f6b80d442ea6e2d406184a34b1b38ea81"
+      "name": "cf-finder-agent-0.1.2-linux-armv7.tar.gz",
+      "sha256": "3ad1e7944d652a4aea43716e92e0d2918166408dafff8de3643f180cce6d0dc1"
     },
     {
-      "name": "cf-finder-agent-0.1.1.sha256",
-      "sha256": "4881d60022bce2ad2886b1b4623a291b299458d4c062db99ea10ad88f5df790e"
+      "name": "cf-finder-agent-0.1.2.sha256",
+      "sha256": "1f8648fdedff7828cb8d65dc126b3e6a3dbde3e108545a6967091527989a0226"
     }
   ]
 }
