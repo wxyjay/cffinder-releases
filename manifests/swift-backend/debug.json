@@ -7,19 +7,19 @@
   "assets": [
     {
       "name": "CFFinderSwiftBackend-0.1.4-linux-aarch64.sha256",
-      "sha256": "f1c30a30a4ea9427b9225b1fe1aedac02a01a58a6c72e8b32ebb776018ba6438"
+      "sha256": "90fc878e7407b7395f13ce572ad56b5dedda17e461c67306dee17033f329f572"
     },
     {
       "name": "CFFinderSwiftBackend-0.1.4-linux-aarch64.tar.gz",
-      "sha256": "65dea25dbf0b9eeb0bc65e5c3e1bcace6d82f2f59b73c953851e101d07b9eb2a"
+      "sha256": "9f0a641644b7ecc443cc135bdc5171e4a9c1c6a63f8b97e3674328a204f8fd33"
     },
     {
       "name": "CFFinderSwiftBackend-0.1.4-linux-amd64.sha256",
-      "sha256": "e5adea8102fcd3361bcf9bead7fe959aa25b864d0227f4ae0a051fa690e455f4"
+      "sha256": "8d8072f31e67bb16db73710405ea4c18c20a3bbdc4d72957fba81bcc4a07465f"
     },
     {
       "name": "CFFinderSwiftBackend-0.1.4-linux-amd64.tar.gz",
-      "sha256": "d9ce364bbdebfe378ac3b56c41af516776211bccda6af36cb49b7e26896654d6"
+      "sha256": "98a932ba53d1df5b95dac9d8abdbc62852e6258a2dcbc3806857a5eead391664"
     }
   ]
 }
