@@ -156,3 +156,9 @@ Interactive menu:
 ```sh
 tmp="$(mktemp)" && curl -fsSL https://raw.githubusercontent.com/wxyjay/cffinder-releases/main/install-opd-openwrt.sh -o "$tmp" && sh "$tmp" --branch main --interactive; rm -f "$tmp"
 ```
+
+## CFFinder for macOS
+
+The stable Sparkle update feed is published at `manifests/app/stable/appcast.xml`.
+The update asset is intended for in-app installation only; this repository does
+not publish a separate manual-install command or package password.

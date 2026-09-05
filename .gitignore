@@ -7,3 +7,15 @@ downloads/
 *.ipk
 *.apk
 *.sha256
+
+# macOS App publishing remains private to the local App repository.
+publish-macos-update.sh
+scripts/publish-macos-update.sh
+AppUpdatePackageSecret+macOS.swift
+*notary*.json
+*.dmg
+*.app/
+*.zip
+*.p8
+*.pem
+private_key*
