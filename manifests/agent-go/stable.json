@@ -1,33 +1,33 @@
 {
   "project": "agent-go",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "channel": "stable",
-  "tag": "agent-go-v0.1.3",
-  "commit": "22a8a364ffa1b47788d92f178a41b2d042eda47d",
+  "tag": "agent-go-v0.1.4",
+  "commit": "bde39769ec6bf5f72b133e99fa19a50996feacb5",
   "assets": [
     {
-      "name": "cf-finder-agent-0.1.3-linux-aarch64.tar.gz",
-      "sha256": "755f9c70a530bc71dd655de76bd94b72008931e36e2a5f0d324f81c03813dc3e"
+      "name": "cf-finder-agent-0.1.4-linux-aarch64.tar.gz",
+      "sha256": "eaf6807fe6b5b7247d7e6ca5abccea8333f4e951061b069d5896688d0f44532a"
     },
     {
-      "name": "cf-finder-agent-0.1.3-linux-alpine-aarch64.tar.gz",
-      "sha256": "3c7799fcf9850496fedc55de099a727e26f745cb982db866246b4ed1fe485a65"
+      "name": "cf-finder-agent-0.1.4-linux-alpine-aarch64.tar.gz",
+      "sha256": "91c712d43fed8d4e35f4cbebaa77a13b081ec83c45df146e7149c75679bc4568"
     },
     {
-      "name": "cf-finder-agent-0.1.3-linux-alpine-amd64.tar.gz",
-      "sha256": "e3c60ce791e8edea716fb736931f0a9dc93e5e67683396170f9c9fd3294dc82a"
+      "name": "cf-finder-agent-0.1.4-linux-alpine-amd64.tar.gz",
+      "sha256": "ca77cfb0ec9f8f40f53ecdbccb4e7427bf12171185099f7ff4039b4fff70dc20"
     },
     {
-      "name": "cf-finder-agent-0.1.3-linux-amd64.tar.gz",
-      "sha256": "001f853678c6aeeae95b29d0b36692937ceed5eaa9ef42ffb7e0a0c9ba4d1046"
+      "name": "cf-finder-agent-0.1.4-linux-amd64.tar.gz",
+      "sha256": "55b26f1e350f2e1270d99b0d872fa0f6237afb37ffbc281febd983964c2cb40e"
     },
     {
-      "name": "cf-finder-agent-0.1.3-linux-armv7.tar.gz",
-      "sha256": "90d3aeda09d1323f4762e370610bc89bc696d78b7d1cb8aaecc0148e47cbc1dc"
+      "name": "cf-finder-agent-0.1.4-linux-armv7.tar.gz",
+      "sha256": "593675aa9a80ff7f09fb6868dce5a3ae3a562e7ce17e1df9f31c73df69af815e"
     },
     {
-      "name": "cf-finder-agent-0.1.3.sha256",
-      "sha256": "c63d16c41afe381738324e8e0e20542ed262940c4c2104979ebe08a5cd4ba246"
+      "name": "cf-finder-agent-0.1.4.sha256",
+      "sha256": "839caa51f71d53841b3b0702c47aff06e6c7c8296e0d0fc2dd1572e4184b2b01"
     }
   ]
 }
