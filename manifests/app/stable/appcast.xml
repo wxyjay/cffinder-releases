@@ -6,18 +6,18 @@
     <description>CFFinder macOS stable updates</description>
     <language>en</language>
     <item>
-      <title>CFFinder 1.0 (21)</title>
-      <pubDate>Sun, 06 Sep 2026 07:41:05 +0000</pubDate>
-      <link>https://github.com/wxyjay/cffinder-releases/releases/tag/cffinder-app-v1.0-b21</link>
-      <description><![CDATA[Version 1.0b21.]]></description>
-      <sparkle:version>21</sparkle:version>
+      <title>CFFinder 1.0 (22)</title>
+      <pubDate>Sun, 06 Sep 2026 08:02:41 +0000</pubDate>
+      <link>https://github.com/wxyjay/cffinder-releases/releases/tag/cffinder-app-v1.0-b22</link>
+      <description><![CDATA[Version 1.0b22.]]></description>
+      <sparkle:version>22</sparkle:version>
       <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
       <enclosure
-        url="https://github.com/wxyjay/cffinder-releases/releases/download/cffinder-app-v1.0-b21/CFFinder-App-1.0-21-macos-universal.dmg"
-        length="20576768"
+        url="https://github.com/wxyjay/cffinder-releases/releases/download/cffinder-app-v1.0-b22/CFFinder-App-1.0-22-macos-universal.dmg"
+        length="20629504"
         type="application/octet-stream"
-        sparkle:edSignature="LvYLupzxQNKgTcI93Bm0vUrr7XRUQfU1QbIcG6Mg+I6ykhVzxaRF0U90aLy5Wc7K93hUEpRqerABYULfKJ1mDw==" />
+        sparkle:edSignature="4wjpm7CrFJzcMktTSvwYJR9CxQJEYb27oqk9RBe6R2fjksBbeZYpA9yF+rnYd75uxE3cBiNYj8Ptxb3NilU1Bw==" />
     </item>
   </channel>
 </rss>
