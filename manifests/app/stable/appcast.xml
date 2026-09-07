@@ -6,18 +6,18 @@
     <description>CFFinder macOS stable updates</description>
     <language>en</language>
     <item>
-      <title>CFFinder 1.0 (22)</title>
-      <pubDate>Sun, 06 Sep 2026 08:02:41 +0000</pubDate>
-      <link>https://github.com/wxyjay/cffinder-releases/releases/tag/cffinder-app-v1.0-b22</link>
-      <description><![CDATA[Version 1.0b22.]]></description>
-      <sparkle:version>22</sparkle:version>
+      <title>CFFinder 1.0 (23)</title>
+      <pubDate>Mon, 07 Sep 2026 03:41:36 +0000</pubDate>
+      <link>https://github.com/wxyjay/cffinder-releases/releases/tag/cffinder-app-v1.0-b23</link>
+      <description><![CDATA[CFFinder 1.0 Build 23 Beta 版优化和修复了部分编辑表单的呈现状态管理错误及数据加载更多时的部分错误。]]></description>
+      <sparkle:version>23</sparkle:version>
       <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
       <enclosure
-        url="https://github.com/wxyjay/cffinder-releases/releases/download/cffinder-app-v1.0-b22/CFFinder-App-1.0-22-macos-universal.dmg"
-        length="20629504"
+        url="https://github.com/wxyjay/cffinder-releases/releases/download/cffinder-app-v1.0-b23/CFFinder-App-1.0-23-macos-universal.dmg"
+        length="20709376"
         type="application/octet-stream"
-        sparkle:edSignature="4wjpm7CrFJzcMktTSvwYJR9CxQJEYb27oqk9RBe6R2fjksBbeZYpA9yF+rnYd75uxE3cBiNYj8Ptxb3NilU1Bw==" />
+        sparkle:edSignature="bNrCXOnFJkssp0y4NewSzGGkBp8tumlysbfuLuejHv+fJv+fNscK36IfjxixJLBm6ZJDfO/XrdK2LHIz6MnWAQ==" />
     </item>
   </channel>
 </rss>
