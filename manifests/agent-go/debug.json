@@ -1,33 +1,33 @@
 {
   "project": "agent-go",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "channel": "debug",
-  "tag": "agent-go-debug-v0.1.5",
-  "commit": "3ed445843c65a8c4bbbab74b47e62fb103e4e21e",
+  "tag": "agent-go-debug-v0.1.6",
+  "commit": "b1c7915135c79f3c8102466a8458e56f1c6383d3",
   "assets": [
     {
-      "name": "cf-finder-agent-0.1.5-linux-aarch64.tar.gz",
-      "sha256": "560bff5de81e9243f54c4597ce3cfcba6fe69c0125573bea269ea17b244590fa"
+      "name": "cf-finder-agent-0.1.6-linux-aarch64.tar.gz",
+      "sha256": "4831fb73541015b83b85c7776a2e5569e4f050e85b0c56222e80e64c9e5fc2f6"
     },
     {
-      "name": "cf-finder-agent-0.1.5-linux-alpine-aarch64.tar.gz",
-      "sha256": "abc1923de22dda7c1743befdd6fa9e268a41eb9802a010f83e540c508221e19c"
+      "name": "cf-finder-agent-0.1.6-linux-alpine-aarch64.tar.gz",
+      "sha256": "c09929190a9010e51ced913bc2e5ea5fd1445748acc53d8d0c3135c9de0d3754"
     },
     {
-      "name": "cf-finder-agent-0.1.5-linux-alpine-amd64.tar.gz",
-      "sha256": "922d383485330760040f7e3ec4f4a2dda3110c67f71e0f63861ce442a4662fc0"
+      "name": "cf-finder-agent-0.1.6-linux-alpine-amd64.tar.gz",
+      "sha256": "a93d3918d79f0bb84906245f66c5da820028a8f88a75f5891ee81293af425946"
     },
     {
-      "name": "cf-finder-agent-0.1.5-linux-amd64.tar.gz",
-      "sha256": "ad2ac55e7e05f0b29bfc489e164327357f97b1a5fc3801f2e79751904a62341a"
+      "name": "cf-finder-agent-0.1.6-linux-amd64.tar.gz",
+      "sha256": "e968baa9ea862876bb54cac372f28129f29b0ab3ec9d2d2fed60661212a32ad1"
     },
     {
-      "name": "cf-finder-agent-0.1.5-linux-armv7.tar.gz",
-      "sha256": "a129b7328c596cc1eb85024a8c32ccc752c952fbf2f35c6e06e146a43faadad3"
+      "name": "cf-finder-agent-0.1.6-linux-armv7.tar.gz",
+      "sha256": "715f0357adf6232684fc8e441b19d5857905d11f412bfb1a56c84ce78a23366b"
     },
     {
-      "name": "cf-finder-agent-0.1.5.sha256",
-      "sha256": "dbd517cc9684bd4d08a0a35c63c600cbd2f79286ad8c73d5235d2db9c2ee7fd0"
+      "name": "cf-finder-agent-0.1.6.sha256",
+      "sha256": "88385d891d1d9f1daf92d9eea64b5535801fc070c30ff490b092fc6918067309"
     }
   ]
 }
