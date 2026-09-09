@@ -452,6 +452,24 @@ depend() {
   need net
   after firewall
 }
+limit_service_log() {
+  log_path="\$1"
+  [ -f "\$log_path" ] || return 0
+  log_size="\$(wc -c < "\$log_path" 2>/dev/null || printf '0')"
+  [ "\$log_size" -le 2097152 ] && return 0
+  if tail -c 2097152 "\$log_path" > "\$log_path.1.tmp" 2>/dev/null; then
+    mv -f "\$log_path.1.tmp" "\$log_path.1"
+    : > "\$log_path"
+  else
+    rm -f "\$log_path.1.tmp"
+  fi
+}
+start_pre() {
+  checkpath -d -m 0755 "${DATA_DIR}"
+  checkpath -d -m 0755 "${RUNTIME_DIR}"
+  limit_service_log "\$output_log"
+  limit_service_log "\$error_log"
+}
 EOF
   chmod +x "/etc/init.d/${SERVICE_NAME}"
 }

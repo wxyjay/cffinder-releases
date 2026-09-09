@@ -19,3 +19,7 @@ AppUpdatePackageSecret+macOS.swift
 *.p8
 *.pem
 private_key*
+
+# Local installer verification; never publish these repository-specific tests.
+/tests/install-agent-lite-test.sh
+/tests/install-opd-openwrt-proxy-test.sh
