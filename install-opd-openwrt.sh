@@ -7,7 +7,59 @@ BRANCH="main"
 ACTION=""
 NO_START=0
 USE_PROXY=0
+GITHUB_RAW_PROXY_PREFIX="${GITHUB_RAW_PROXY_PREFIX:-https://ghproxy.net/}"
 GITHUB_RELEASE_CDN_PREFIX="${GITHUB_RELEASE_CDN_PREFIX:-https://ghfast.top/}"
+CURL_BIN="${CURL_BIN:-curl}"
+
+selfupdate_status() {
+  status_file="${CFFINDER_SELFUPDATE_STATUS_FILE:-}"
+  [ -n "$status_file" ] || return 0
+  phase="$1"
+  progress="$2"
+  message="$3"
+  running="$4"
+  error_message="${5:-}"
+  now="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+  operation="${CFFINDER_SELFUPDATE_OPERATION:-updating}"
+  current_version="${CFFINDER_SELFUPDATE_CURRENT_VERSION:-unknown}"
+  current_release="${CFFINDER_SELFUPDATE_CURRENT_RELEASE:-1}"
+  current_channel="${CFFINDER_SELFUPDATE_CURRENT_CHANNEL:-stable}"
+  target_version="${CFFINDER_SELFUPDATE_TARGET_VERSION:-$current_version}"
+  target_release="${CFFINDER_SELFUPDATE_TARGET_RELEASE:-$current_release}"
+  target_channel="${CFFINDER_SELFUPDATE_TARGET_CHANNEL:-$current_channel}"
+  update_available=true
+  [ "$phase" = "completed" ] && update_available=false
+  escaped_message="$(printf '%s' "$message" | sed 's/\\/\\\\/g; s/"/\\"/g')"
+  escaped_error="$(printf '%s' "$error_message" | sed 's/\\/\\\\/g; s/"/\\"/g')"
+  mkdir -p "$(dirname "$status_file")"
+  tmp_status="${status_file}.tmp.$$"
+  cat > "$tmp_status" <<EOF
+{
+  "version": {
+    "currentVersion": "$current_version",
+    "currentPackageRelease": "$current_release",
+    "currentChannel": "$current_channel",
+    "latestVersion": "$target_version",
+    "latestPackageRelease": "$target_release",
+    "latestChannel": "$target_channel",
+    "updateAvailable": $update_available,
+    "lastCheckedAt": "$now"
+  },
+  "operation": "$operation",
+  "phase": "$phase",
+  "progress": $progress,
+  "message": "$escaped_message",
+  "isRunning": $running,
+  "error": "$escaped_error",
+  "targetVersion": "$target_version",
+  "targetPackageRelease": "$target_release",
+  "targetChannel": "$target_channel",
+  "updatedAt": "$now"
+}
+EOF
+  chmod 600 "$tmp_status"
+  mv -f "$tmp_status" "$status_file"
+}
 
 usage() {
   cat <<'EOF'
@@ -20,7 +72,7 @@ Actions:
   --purge        Remove packages plus config/data.
   --status       Show service status.
   --interactive  Show menu.
-  --use-proxy    Download release assets through ghfast.top.
+  --use-proxy    Prefer proxy/CDN for manifests and release assets, then fall back to GitHub.
 EOF
 }
 
@@ -75,9 +127,25 @@ detect_target() {
   esac
 }
 
-manifest_url() {
+manifest_direct_url() {
   channel="$1"
   printf 'https://raw.githubusercontent.com/%s/%s/manifests/opd/%s.json' "$RELEASE_REPO" "$BRANCH" "$channel"
+}
+
+raw_content_url() {
+  raw_url="$1"
+  if [ "$USE_PROXY" -eq 1 ] && [ -n "$GITHUB_RAW_PROXY_PREFIX" ]; then
+    case "$GITHUB_RAW_PROXY_PREFIX" in
+      */) printf '%s%s' "$GITHUB_RAW_PROXY_PREFIX" "$raw_url" ;;
+      *) printf '%s/%s' "$GITHUB_RAW_PROXY_PREFIX" "$raw_url" ;;
+    esac
+  else
+    printf '%s' "$raw_url"
+  fi
+}
+
+manifest_url() {
+  raw_content_url "$(manifest_direct_url "$1")"
 }
 
 release_asset_url() {
@@ -90,6 +158,44 @@ release_asset_url() {
   else
     printf '%s' "$raw_url"
   fi
+}
+
+download_with_fallback() {
+  preferred_url="$1"
+  direct_url="$2"
+  output_path="$3"
+  if [ "$preferred_url" != "$direct_url" ]; then
+    if "$CURL_BIN" -fsSL "$preferred_url" -o "$output_path"; then
+      DOWNLOAD_USED_URL="$preferred_url"
+      return 0
+    fi
+    echo "Proxy download failed; falling back to GitHub." >&2
+  fi
+  "$CURL_BIN" -fsSL "$direct_url" -o "$output_path"
+  DOWNLOAD_USED_URL="$direct_url"
+}
+
+manifest_has_tag() {
+  manifest="$1"
+  sed -n 's/.*"tag"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$manifest" | grep -q .
+}
+
+download_manifest_with_fallback() {
+  channel="$1"
+  output_path="$2"
+  direct_url="$(manifest_direct_url "$channel")"
+  preferred_url="$(manifest_url "$channel")"
+  if [ "$preferred_url" != "$direct_url" ]; then
+    if "$CURL_BIN" -fsSL "$preferred_url" -o "$output_path"; then
+      if manifest_has_tag "$output_path"; then
+        return 0
+      fi
+      echo "Proxy manifest validation failed; falling back to GitHub." >&2
+    else
+      echo "Proxy manifest download failed; falling back to GitHub." >&2
+    fi
+  fi
+  "$CURL_BIN" -fsSL "$direct_url" -o "$output_path"
 }
 
 extract_asset_names() {
@@ -148,10 +254,17 @@ download_one() {
   out_dir="$3"
   expected_sha="${4:-}"
   [ -n "$asset" ] || return 0
-  url="$(release_asset_url "https://github.com/${RELEASE_REPO}/releases/download/${tag}/${asset}")"
-  curl -fL "$url" -o "${out_dir}/${asset}"
+  direct_url="https://github.com/${RELEASE_REPO}/releases/download/${tag}/${asset}"
+  url="$(release_asset_url "$direct_url")"
+  download_with_fallback "$url" "$direct_url" "${out_dir}/${asset}"
   if [ -n "$expected_sha" ]; then
     actual_sha="$(sha256_file "${out_dir}/${asset}")"
+    if [ "$actual_sha" != "$expected_sha" ] && [ "$DOWNLOAD_USED_URL" != "$direct_url" ]; then
+      echo "Proxy package checksum mismatch; falling back to GitHub." >&2
+      "$CURL_BIN" -fsSL "$direct_url" -o "${out_dir}/${asset}"
+      DOWNLOAD_USED_URL="$direct_url"
+      actual_sha="$(sha256_file "${out_dir}/${asset}")"
+    fi
     if [ "$actual_sha" != "$expected_sha" ]; then
       echo "SHA256 mismatch for ${asset}: got ${actual_sha}, expected ${expected_sha}" >&2
       exit 1
@@ -186,19 +299,30 @@ show_status() {
 }
 
 install_or_update() {
-  need_cmd curl
+  need_cmd "$CURL_BIN"
+  selfupdate_status "checking_latest" 0.12 "checking update manifest" true
   format="$(detect_pkg_format)"
   target="$(detect_target)"
   channel="stable"
   [ "$BRANCH" = "debug" ] && channel="debug"
   tmp_dir="$(mktemp -d)"
-  trap 'rm -rf "$tmp_dir"' EXIT
+  cleanup_install() {
+    rc="$?"
+    trap - EXIT
+    if [ "$rc" -ne 0 ]; then
+      selfupdate_status "failed" 1 "package installation failed" false "package installation failed"
+    fi
+    rm -rf "$tmp_dir"
+    exit "$rc"
+  }
+  trap cleanup_install EXIT
   manifest="${tmp_dir}/manifest.json"
 
   echo "Installing CFFinder OPD (${BRANCH}, ${format}, ${target})"
-  curl -fsSL "$(manifest_url "$channel")" -o "$manifest"
+  download_manifest_with_fallback "$channel" "$manifest"
   tag="$(sed -n 's/.*"tag"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$manifest" | head -n 1)"
   [ -n "$tag" ] || { echo "Invalid OPD manifest." >&2; exit 1; }
+  selfupdate_status "downloading" 0.15 "downloading packages" true
 
   daemon_asset="$(select_asset "$manifest" "$format" "$target" daemon || true)"
   luci_asset="$(select_asset "$manifest" "$format" "$target" luci || true)"
@@ -212,7 +336,9 @@ install_or_update() {
   daemon_pkg="$(download_one "$tag" "$daemon_asset" "$tmp_dir" "$daemon_sha")"
   luci_pkg="$(download_one "$tag" "$luci_asset" "$tmp_dir" "$luci_sha" || true)"
   i18n_pkg="$(download_one "$tag" "$i18n_asset" "$tmp_dir" "$i18n_sha" || true)"
+  selfupdate_status "verifying" 0.55 "package checksums verified" true
 
+  selfupdate_status "installing" 0.75 "installing packages" true
   /etc/init.d/$SERVICE_NAME stop >/dev/null 2>&1 || true
   set -- "$daemon_pkg"
   [ -n "$luci_pkg" ] && set -- "$@" "$luci_pkg"
@@ -225,9 +351,11 @@ install_or_update() {
   /etc/init.d/rpcd restart >/dev/null 2>&1 || true
   /etc/init.d/uhttpd restart >/dev/null 2>&1 || true
   /etc/init.d/$SERVICE_NAME enable >/dev/null 2>&1 || true
+  selfupdate_status "waiting_restart" 0.95 "waiting for service restart" true
   if [ "$NO_START" -eq 0 ]; then
     start_service_after_install
   fi
+  selfupdate_status "completed" 1 "updated and restarted" false
   show_status
 }
 
@@ -280,6 +408,10 @@ interactive_menu() {
     *) echo "Cancelled." ;;
   esac
 }
+
+if [ "${CFFINDER_INSTALLER_LIB_ONLY:-0}" = "1" ]; then
+  return 0 2>/dev/null || exit 0
+fi
 
 case "$ACTION" in
   install) install_or_update ;;

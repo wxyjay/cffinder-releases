@@ -7,3 +7,19 @@ downloads/
 *.ipk
 *.apk
 *.sha256
+
+# macOS App publishing remains private to the local App repository.
+publish-macos-update.sh
+scripts/publish-macos-update.sh
+AppUpdatePackageSecret+macOS.swift
+*notary*.json
+*.dmg
+*.app/
+*.zip
+*.p8
+*.pem
+private_key*
+
+# Local installer verification; never publish these repository-specific tests.
+/tests/install-agent-lite-test.sh
+/tests/install-opd-openwrt-proxy-test.sh
