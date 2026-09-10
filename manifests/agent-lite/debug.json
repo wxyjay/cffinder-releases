@@ -3,29 +3,29 @@
   "version": "0.1.0",
   "channel": "debug",
   "tag": "agent-lite-debug-v0.1.0",
-  "commit": "ddced51c85277ff33337f6aa3ba157fcdf7e6d6f",
+  "commit": "5b6d9b2a5c9f2b0950789ec844a6c1640fceab2f",
   "image": "ghcr.io/wxyjay/cffinder-agent-lite",
   "imageTag": "debug",
   "installer": {
     "url": "https://raw.githubusercontent.com/wxyjay/cffinder-releases/debug/install-agent-lite.sh",
-    "sha256": "a08f1a9910958816922b3de93217eeab488a14f9c3a0f13100cbabdd694b74ad"
+    "sha256": "bcc84989644775377e73be7a81c032b3af6c4bdb8a6f87bd027f70096e1f4a72"
   },
   "assets": [
     {
       "name": "cf-finder-agent-lite-0.1.0-linux-aarch64.tar.gz",
-      "sha256": "5aae949dc8f5f10979482b2c87267d4cfb04e2b4fe6378f51f9d8290123f11a6"
+      "sha256": "719894cc9afd73a567479ce41dd49f6c95776c6cf311e80194395a86d046b4e9"
     },
     {
       "name": "cf-finder-agent-lite-0.1.0-linux-amd64.tar.gz",
-      "sha256": "611d650bf5a944b6f5e32cebfeb395dc3f3f3fa03cfadd29cb5a82ba94eb0874"
+      "sha256": "35f138db6a85c0feff62086e531dde1c479308775386cb0e453d973879519ac8"
     },
     {
       "name": "cf-finder-agent-lite-0.1.0-linux-armv7.tar.gz",
-      "sha256": "fbe072a374d368c8d5e61c076f519f08a1fdd34be77fbbb0c70a74bfa2761efd"
+      "sha256": "48e982544c32d58319134a1f0acbb25c8ead0ccf9d845d3d598872eefec2a886"
     },
     {
       "name": "cf-finder-agent-lite-0.1.0.sha256",
-      "sha256": "6a2cd3ae1c187a5d9cd037a7538042c0b8c1eafe3e96ba20cdc7aeebe0e35239"
+      "sha256": "00cb52241a7e4c126763b96e80cdce3b108d1992fa1e90474e6fb6f4223c972e"
     }
   ]
 }
