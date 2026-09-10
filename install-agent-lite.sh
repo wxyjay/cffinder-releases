@@ -150,6 +150,13 @@ resolve_install_layout() {
   CONFIG_PATH="${CF_FINDER_AGENT_LITE_CONFIG_PATH:-${DATA_DIR}/config.json}"
 }
 
+resolved_lite_runtime_profile() {
+  if [ "$INSTALL_STYLE" = "service" ] \
+    && { [ "$SERVICE_MANAGER" = "systemd" ] || [ "$SERVICE_MANAGER" = "openrc" ]; }; then
+    printf 'adaptive\n'
+  fi
+}
+
 detect_arch_from() {
   case "$1" in
     x86_64|amd64) printf 'amd64\n' ;;
@@ -379,6 +386,8 @@ EOF
 }
 
 write_systemd_unit() {
+  service_runtime_profile="$(resolved_lite_runtime_profile)"
+  [ -n "$service_runtime_profile" ] || return 1
   cat > "/etc/systemd/system/${SERVICE_NAME}.service" <<EOF
 [Unit]
 Description=CFFinder Agent Lite
@@ -388,6 +397,7 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=root
+Environment=CFFINDER_LITE_RUNTIME_PROFILE=${service_runtime_profile}
 ExecStart=${BIN_PATH} run -config ${CONFIG_PATH}
 Restart=on-failure
 RestartSec=5
@@ -399,6 +409,8 @@ EOF
 }
 
 write_openrc_service() {
+  service_runtime_profile="$(resolved_lite_runtime_profile)"
+  [ -n "$service_runtime_profile" ] || return 1
   cat > "/etc/init.d/${SERVICE_NAME}" <<EOF
 #!/sbin/openrc-run
 name="CFFinder Agent Lite"
@@ -408,6 +420,7 @@ command_background="yes"
 pidfile="${RUNTIME_DIR}/${SERVICE_NAME}.pid"
 output_log="${RUNTIME_DIR}/service.log"
 error_log="${RUNTIME_DIR}/service.err"
+export CFFINDER_LITE_RUNTIME_PROFILE=${service_runtime_profile}
 depend() {
   need net
   after firewall
