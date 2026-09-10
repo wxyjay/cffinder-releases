@@ -115,6 +115,9 @@ foreground and Docker/OCI installations intentionally do not advertise that
 capability; update those installations by running this script again or replacing
 the container image.
 
+Managed installations select the appropriate runtime automatically; container
+deployments continue to follow their image configuration.
+
 Install or update the standalone Lite Agent, stable:
 
 ```bash
