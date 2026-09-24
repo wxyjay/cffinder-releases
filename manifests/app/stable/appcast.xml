@@ -6,18 +6,18 @@
     <description>CFFinder macOS stable updates</description>
     <language>en</language>
     <item>
-      <title>CFFinder 1.0 (25)</title>
-      <pubDate>Sun, 13 Sep 2026 15:02:03 +0000</pubDate>
-      <link>https://github.com/wxyjay/cffinder-releases/releases/tag/cffinder-app-v1.0-b25</link>
-      <description><![CDATA[CFFinder 1.0 Build 25 Beta 版优化了 opd 控制器任务结果行中的速率格式呈现、优化了自动化任务的排序问题、并修复了多项布局错误。]]></description>
-      <sparkle:version>25</sparkle:version>
+      <title>CFFinder 1.0 (26)</title>
+      <pubDate>Thu, 24 Sep 2026 16:46:36 +0000</pubDate>
+      <link>https://github.com/wxyjay/cffinder-releases/releases/tag/cffinder-app-v1.0-b26</link>
+      <description><![CDATA[CFFinder 1.0 Build 26 Beta 版修复了 Agent 的网络接口、磁盘数据集合无法显示的BUG。]]></description>
+      <sparkle:version>26</sparkle:version>
       <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
       <enclosure
-        url="https://github.com/wxyjay/cffinder-releases/releases/download/cffinder-app-v1.0-b25/CFFinder-App-1.0-25-macos-universal.dmg"
-        length="20746752"
+        url="https://github.com/wxyjay/cffinder-releases/releases/download/cffinder-app-v1.0-b26/CFFinder-App-1.0-26-macos-universal.dmg"
+        length="20472832"
         type="application/octet-stream"
-        sparkle:edSignature="YHdXK2F8nC8jRdwDgYgnOnqqEOrAToY6RskaXW+dtoh1CgfQvN0UN7/9ulbqTjrOOw5MiUwsu3b3MEiRd20RBA==" />
+        sparkle:edSignature="nmNcvmXoip4bJaK6K6kHsgTnkwdBKb+avcQR0+nGLkkEhOaI44tixFZbUfFZnLVwxmmjlhnyXRqI28MRjA76AA==" />
     </item>
   </channel>
 </rss>
